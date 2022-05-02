@@ -1,0 +1,40 @@
+{
+  "name": "kyc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "@truffle/contract": "^4.5.3",
+    "@truffle/hdwallet-provider": "^2.0.4",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "jsonfile": "^5.0.0",
+    "nodemon": "^2.0.15",
+    "solc": "^0.6.4",
+    "swagger-jsdoc": "^6.2.0",
+    "swagger-ui-express": "^4.3.0",
+    "truffle": "^5.5.7",
+    "truffle-contract": "^4.0.31",
+    "web3": "^1.2.2"
+  },
+  "scripts": {
+    "start": " npm run build && nodemon ./dist/app.js",
+    "build": "babel src -d dist --copy-files",
+    "swagger-autogen": "npm run build && nodemon ./dist/utils/swagger-auto.js",
+    "dev": "cross-env NODE_OPTIONS='--openssl-legacy-provider' next dev"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-cli": "^6.26.0",
+    "dayjs": "^1.11.0",
+    "express": "^4.17.3",
+    "pino": "^7.10.0",
+    "pino-pretty": "^7.6.1",
+    "swagger-autogen": "^2.21.0"
+  }
+}
