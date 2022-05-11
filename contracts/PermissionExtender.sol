@@ -1,9 +1,10 @@
-pragma solidity ^0.6.4;
+pragma solidity ^0.8.13;
 
-import "./Owners.sol";
+import "@openzeppelin/contracts/ownership/Ownable.sol"
+
 import "./IdentityUtils.sol";
 
-abstract contract PermissionExtender is Owners,IdentityUtils{
+abstract contract PermissionExtender is Ownable,IdentityUtils{
 
     mapping(string => mapping(uint8 => int)) permissions;
 
@@ -25,7 +26,7 @@ abstract contract PermissionExtender is Owners,IdentityUtils{
     //    function setAttributeValue(String attrName ,string attrVallue) constant private returns (boolean);
     function getAttributeValue(string memory attrName) view internal virtual returns (bytes32);
     //function getCustomerAddress() view public virtual returns (address);
-    function getKYCPerformer()   view  public virtual returns (uint8);
+    function getKYCIssuer()   view  public virtual returns (uint8);
     function getAttributeName(uint row) view virtual public  returns (bytes32);
     function getAttributeLength() view virtual public returns (uint);
 

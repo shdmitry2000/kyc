@@ -1,4 +1,4 @@
-pragma solidity ^0.6.4;
+pragma solidity ^0.8.13;
 
 
 contract IdentityUtils {
@@ -40,39 +40,6 @@ contract IdentityUtils {
         return string(b);
     }
 
-/*
-    function stringToUint(string memory s)  public pure returns (uint result) {
-            bytes memory b = bytes(s);
-            uint i;
-            result = 0;
-            for (i = 0; i < b.length; i++) {
-                uint c = uint(b[i]);
-                if (c >= 48 && c <= 57) {
-                    result = result * 10 + (c - 48);
-                }
-            }
-        }
-
-
-    function uintToString(uint _i) public pure returns (string memory _uintAsString) {
-        if (_i == 0) {
-            return "0";
-        }
-        uint j = _i;
-        uint len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint k = len - 1;
-        while (_i != 0) {
-            bstr[k--] = byte(uint8(48 + _i % 10));
-            _i /= 10;
-        }
-        return string(bstr);
-    }
-*/
 
     function bytes32ToString (bytes32   data) pure public  returns ( string memory ) {
         bytes memory bytesString = new bytes(32);
@@ -86,10 +53,15 @@ contract IdentityUtils {
     }
 
     function stringToBytes32(string memory source) pure public returns (bytes32   result) {
-        assembly {
-        result := mload(add(source, 32))
-        }
+        return keccak256(abi.encodePacked(source))
     }
+    function stringToBytes32_2(string memory source) pure public returns (bytes32   result) {
+            assembly {
+            result := mload(add(source, 32))
+            }
+
+        }
+
 
     function toBytes(uint256 x)  pure public returns (bytes memory b) {
         b = new bytes(32);

@@ -1,5 +1,8 @@
-pragma solidity ^0.6.4;
+pragma solidity ^0.8.13
+ //^0.6.4;
 pragma experimental ABIEncoderV2;
+
+import "@openzeppelin/contracts/ownership/Ownable.sol"
 
 import "./KYC.sol";
 import "./IdentityUtils.sol";
@@ -19,11 +22,9 @@ import "./IdentityUtils.sol";
 contract Regulator is Owners,IdentityUtils{
 
 
-
     event RegulatoryContractDeployed (address msgSender,string  msgstr,uint timestamp);
 
     constructor() public {
-//    function Regulator(){
         owner = msg.sender;
 
        emit RegulatoryContractDeployed(owner,"Mined",now);
@@ -49,13 +50,13 @@ contract Regulator is Owners,IdentityUtils{
         struct Company {
             string name;
             string local_address;
-            uint8 registry_id;
+            uint16 registry_id;
         }
 
 
-        mapping (uint8=>Company) public companiesbyid ;
-        mapping (address=>uint8) public companiesbyaddress;
-        uint8  []  public companiesList;
+        mapping (uint16=>Company) public companiesbyid ;
+        mapping (address=>uint16) public companiesbyaddress;
+        uint16  []  public companiesList;
 
 
 
@@ -66,7 +67,7 @@ contract Regulator is Owners,IdentityUtils{
             address kyc;
             bool require_update;
             bool update_in_progress;
-            //mapping(uint8 => address)  permissions;
+            //mapping(uint16 => address)  permissions;
             //mapping(address => mapping(address => bool) )  requests;
 
         }
@@ -77,9 +78,9 @@ contract Regulator is Owners,IdentityUtils{
 
     // KycRequest struct. It defines kyc request details of customers
             struct ConsentRequest {
-                uint8 company_id;
+                uint16 company_id;
                 bytes32 id;
-                uint8 kyc_manager_id;
+                uint16 kyc_manager_id;
                 bool performed;
                 uint perform_stamp;
             }
@@ -88,9 +89,9 @@ contract Regulator is Owners,IdentityUtils{
            //mapping(bytes32 => ConcensusRequest) public concensusRequests
 
 
-    event submitConsentRequest (string  id,uint8  company_id,uint timestamp)  ;
+    event submitConsentRequest (string  id,uint16  company_id,uint timestamp)  ;
 
-           function createConsentRequest(string memory id,uint8 company_id,uint8 kyc_manager_id) public   {
+           function createConsentRequest(string memory id,uint16 company_id,uint16 kyc_manager_id) public   {
 
             //   require(!check_is_consent_request_exist(id, company_id),"Request already exists!");
             //   require(consumers[id].chainAddress != address(0), "Customer still not  exist!");
@@ -104,10 +105,10 @@ contract Regulator is Owners,IdentityUtils{
            // return consentRequests.length;
          }
 
-         event performedConsentRequest (string  id,uint8  company_id,uint8 kyc_manager_id,bool finished,uint timestamp)  ;
+         event performedConsentRequest (string  id,uint16  company_id,uint16 kyc_manager_id,bool finished,uint timestamp)  ;
 
 
-         function finishConsentRequest(string memory id,uint8 company_id,uint8 kyc_manager_id,bool finished) public   {
+         function finishConsentRequest(string memory id,uint16 company_id,uint16 kyc_manager_id,bool finished) public   {
 
                      //   require(!check_is_consent_request_exist(id, company_id),"Request already exists!");
                      //   require(consumers[id].chainAddress != address(0), "Customer still not  exist!");
@@ -130,15 +131,15 @@ contract Regulator is Owners,IdentityUtils{
     }
 
     /*
-           function getConsentRequestsbyConsumer(string memory id,uint8 company_id)
+           function getConsentRequestsbyConsumer(string memory id,uint16 company_id)
                 public external
                 view
-                returns (uint8[] memory)
+                returns (uint16[] memory)
             {
                     require(true != true,"not implemented yet!");
                     bytes32 idbytes32=stringToBytes32(id);
-                    uint8[] memory consentList=new uint8[] ;
-                   // uint8 count = 0;
+                    uint16[] memory consentList=new uint16[] ;
+                   // uint16 count = 0;
 
                     // Get all the dataHash of the customer for which bank has raised a request
                     for (uint256 i = 0; i < consentRequests.length; i++) {
@@ -150,14 +151,14 @@ contract Regulator is Owners,IdentityUtils{
                     return consentList;
                 }
 
-           function getConsentRequestsbyCompany(uint8 company_id) public
+           function getConsentRequestsbyCompany(uint16 company_id) public
             view
             returns (string[] memory)
 
         {
                 require(true != true,"not implemented yet!");
                 string[] memory consentList ;
-                uint8 count = 0;
+                uint16 count = 0;
 
                 // Get all the dataHash of the customer for which bank has raised a request
                 for (uint256 i = 0; i < consentRequests.length; i++) {
@@ -179,7 +180,6 @@ contract Regulator is Owners,IdentityUtils{
             returns (ConsentRequest[] memory)
 
         {
-                //require(true != true,"not implemented yet!");
 
                 return consentRequests;
             }
@@ -230,8 +230,8 @@ contract Regulator is Owners,IdentityUtils{
 
 
 
-    event AddCompany (address indexed companyAddress,string  name,uint8 registry_id, uint timestamp);
-    function submitCompany(address companyAddress , string memory _name,string memory _local_address,uint8 registry_id) public  {
+    event AddCompany (address indexed companyAddress,string  name,uint16 registry_id, uint timestamp);
+    function submitCompany(address companyAddress , string memory _name,string memory _local_address,uint16 registry_id) public  {
   //      require(companyAddress!=owner,"Company address can't be same as regulator");
   //      require( companiesbyid[company_id].registry_id==0 , "Company with this id already exist!");
         Company storage company=companiesbyid[registry_id];
@@ -246,7 +246,7 @@ contract Regulator is Owners,IdentityUtils{
 
 
 
-    function getCompany( uint8 registry_id) public view returns(string memory,string memory,uint8 )   {
+    function getCompany( uint16 registry_id) public view returns(string memory,string memory,uint16 )   {
  //       require( companiesIdCache[registry_id] , "Company with this id not exist!");
 
             Company memory company=companiesbyid[registry_id];
@@ -254,7 +254,7 @@ contract Regulator is Owners,IdentityUtils{
         }
 
 
-    function connectCompanyAddress( address companyAddress,uint8 id) public     {
+    function connectCompanyAddress( address companyAddress,uint16 id) public     {
          //   require(companyAddress ==owner || companyAddress!=owner,"Company address can't be same as regulator");
         require(true!=true,"Not implemented yet");
         companiesbyaddress[companyAddress]=id;
@@ -264,14 +264,14 @@ contract Regulator is Owners,IdentityUtils{
 
 
 /*
-       function check_is_consent_request_exist(string memory id,uint8 company_id) public payable returns(bool) {
+       function check_is_consent_request_exist(string memory id,uint16 company_id) public payable returns(bool) {
                return false;
        }
 */
 
 
-    event finalizeKYC(string    id,address permissionExtenderAddress,uint8 company_registry_id ,uint timestamp);
-    function performKYC(string memory id , address permissionExtenderAddress,uint8 company_registry_id) public   {
+    event finalizeKYC(string    id,address permissionExtenderAddress,uint16 company_registry_id ,uint timestamp);
+    function performKYC(string memory id , address permissionExtenderAddress,uint16 company_registry_id) public   {
 
         bytes32 idbytes32=stringToBytes32(id);
         Consumer storage consumer=consumers[idbytes32];
@@ -288,7 +288,7 @@ contract Regulator is Owners,IdentityUtils{
 
 
    function performFullKYC(string memory fullname,string memory id,string memory issued_country,string memory laddress,string memory sex,
-        string memory date_of_birth,  bool  smoking,  uint8 company_registry_id) public   {
+        string memory date_of_birth,  bool  smoking,  uint16 company_registry_id) public   {
 
             bytes32 idbytes32=stringToBytes32(id);
             Consumer storage consumer=consumers[idbytes32];
@@ -315,9 +315,9 @@ contract Regulator is Owners,IdentityUtils{
 */
 
 
-    event addPermission(address indexed performerAddress,string  id , uint8 company_registry_id,string  attributeName,uint8   attributepermission ,uint timestamp);
+    event addPermission(address indexed performerAddress,string  id , uint16 company_registry_id,string  attributeName,uint8   attributepermission ,uint timestamp);
 
-    function getConsumerAttributeList( string memory id,uint8 company_registry_id) public view returns(bytes32[] memory)
+    function getConsumerAttributeList( string memory id,uint16 company_registry_id) public view returns(bytes32[] memory)
              {
                 bytes32 idbytes32=stringToBytes32(id);
                  return PermissionExtender(consumers[idbytes32].kyc).getAttributeList();
@@ -325,7 +325,7 @@ contract Regulator is Owners,IdentityUtils{
              }
 
 
-    function addCompanionPermission(string memory id , uint8 company_registry_id,string memory attributeName,uint8   attributepermission) public   {
+    function addCompanionPermission(string memory id , uint16 company_registry_id,string memory attributeName,uint8   attributepermission) public   {
 
              //        require(PermissionExtender(permissionExtenderAddress).getCustomerAddress ==getConsumerAddress(id));
 
@@ -336,14 +336,14 @@ contract Regulator is Owners,IdentityUtils{
               emit addPermission(msg.sender, id,company_registry_id,attributeName,attributepermission, now);
          }
 
-     function getConsumerAttributePermission( string memory id,uint8 company_registry_id,string memory attributeName) public view returns(int permission)
+     function getConsumerAttributePermission( string memory id,uint16 company_registry_id,string memory attributeName) public view returns(int permission)
          {
             bytes32 idbytes32=stringToBytes32(id);
              return PermissionExtender(consumers[idbytes32].kyc).isAttributePermited(attributeName,company_registry_id);
 
          }
 
-         function getConsumerAttributeValue(string memory id,uint8 company_registry_id,string memory attributeName) public view returns(bytes32 )
+         function getConsumerAttributeValue(string memory id,uint16 company_registry_id,string memory attributeName) public view returns(bytes32 )
          {
             bytes32 idbytes32=stringToBytes32(id);
              // require(consumers[idbytes32].chainAddress != address(0) && consumers[getConsumerAddress(id)].permissions[basecompanyAddress]!= address(0));
@@ -375,7 +375,7 @@ contract Regulator is Owners,IdentityUtils{
                 bytes32 idbytes32=stringToBytes32(id);
                 if (consumers[idbytes32].kyc!=address(0))
                 {
-                    return PermissionExtender(consumers[idbytes32].kyc).getKYCPerformer( );
+                    return PermissionExtender(consumers[idbytes32].kyc).getKYCIssuer( );
                 }
                 else
                 {
@@ -386,7 +386,7 @@ contract Regulator is Owners,IdentityUtils{
 
 
 
-    function getCompaniesList() public view returns(  uint8 [] memory)
+    function getCompaniesList() public view returns(  uint16 [] memory)
     {
         // require(consumers[getConsumerAddress(id)].chainAddress != address(0) && consumers[getConsumerAddress(id)].permissions[basecompanyAddress]!= address(0));
 

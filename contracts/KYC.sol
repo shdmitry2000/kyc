@@ -1,6 +1,7 @@
-pragma solidity ^0.6.4;
+pragma solidity ^0.8.13;
 pragma experimental ABIEncoderV2;
 
+//import "@openzeppelin/contracts/utils/Strings.sol";
 import "./PermissionExtender.sol";
 
 
@@ -8,9 +9,8 @@ import "./PermissionExtender.sol";
 contract KYC is PermissionExtender {
 
     bytes32[] public  attributesList;
-    //string[] public  attributesList;
    // address customer;
-    uint8 kycPerformer;
+    uint16 kycPerformer;
     mapping(string => bytes32) internal attributes;
     
     constructor(uint8 _kycPerformer,string memory fullname,string memory id,string memory issued_country,
@@ -43,24 +43,13 @@ contract KYC is PermissionExtender {
         
 
 
+    function getAttributeValue(string memory attrName)  override  view internal virtual  returns (bytes32)
+    {
+        return attributes[attrName];
+    }
 
 
-
-
-
-
-function getAttributeValue(string memory attrName)  override  view internal virtual  returns (bytes32)
-{
-    return attributes[attrName];
-}
-
-/*
-function getCustomerAddress()  override  view public virtual returns (address)
-{
-    return customer;
-}
-*/
-    function getKYCPerformer()  override  view public virtual returns (uint8)
+    function getKYCIssuer()  override  view public virtual returns (uint8)
     {
         return kycPerformer;
     }
