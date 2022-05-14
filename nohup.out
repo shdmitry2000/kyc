@@ -1,0 +1,17 @@
+
+> kyc@1.0.0 build
+> babel src -d dist --copy-files
+
+Successfully compiled 8 files with Babel (804ms).
+[2022-05-03T12:55:26+03:00] INFO: /Users/dmitryshlymovich/workspace/ethereum-identity2/dist
+[2022-05-03T12:55:26+03:00] INFO: /Users/dmitryshlymovich/workspace/ethereum-identity2/dist/utils/../app.js
+[2022-05-03T12:55:26+03:00] INFO: Docs available at http://localhost:8081/docs
+[2022-05-03T12:55:26+03:00] INFO: Application started on port 8081
+(node:27289) [PINODEP008] PinoWarning: prettyPrint is deprecated, look at https://github.com/pinojs/pino-pretty for alternatives.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2022-05-03T12:56:49+03:00] INFO: /Users/dmitryshlymovich/workspace/ethereum-identity2/dist
+[2022-05-03T12:56:49+03:00] INFO: /Users/dmitryshlymovich/workspace/ethereum-identity2/dist/utils/../app.js
+[2022-05-03T12:56:49+03:00] INFO: Docs available at http://localhost:8081/docs
+[2022-05-03T12:56:49+03:00] INFO: Application started on port 8081
+(node:27353) [PINODEP008] PinoWarning: prettyPrint is deprecated, look at https://github.com/pinojs/pino-pretty for alternatives.
+(Use `node --trace-warnings ...` to show where the warning was created)
