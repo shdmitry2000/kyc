@@ -1,4 +1,4 @@
-const NetworkNum=1337
+const NetworkNum=3
 
 
 export default NetworkNum;

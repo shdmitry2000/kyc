@@ -1,11 +1,10 @@
-import  Web3  from '../Web3';
-import RegulatorFunk from '../../build/contracts/regulator.json'
+import  Web3  from '../web3';
+import RegulatorFunk from '../../build/contracts/Regulator.json'
 import KYCFunk from '../../build/contracts/KYC.json'
-import OwnersFunk from '../../build/contracts/Owners.json'
+//import OwnersFunk from '../../build/contracts/Owners.json'
 import contract from 'truffle-contract';
 import log from "../utils/logger";
 import  NetworkNum  from '../const';
-import TestFunk from '../../build/contracts/Test.json'
 
 //const { artifacts } = require("truffle");
 //var Regulator = artifacts.require("../../build/contracts/regulator.json");
@@ -13,13 +12,11 @@ import TestFunk from '../../build/contracts/Test.json'
 
 const RegulatorContract = contract(RegulatorFunk);
 const KycContract = contract(KYCFunk);
-const OwnersContract = contract(OwnersFunk);
-const TestContract = contract(TestFunk);
+//const OwnersContract = contract(OwnersFunk);
 
-let regulatorInstance = new Web3.eth.Contract(RegulatorContract.abi, RegulatorContract.networks[1337].address)
-let kycInstance = new Web3.eth.Contract(KycContract.abi, KycContract.networks[1337].address)
-let ownersInstance = new Web3.eth.Contract(OwnersContract.abi, OwnersContract.networks[1337].address)
-let testInstance = new Web3.eth.Contract(TestContract.abi, TestContract.networks[1337].address)
+let regulatorInstance = new Web3.eth.Contract(RegulatorContract.abi, RegulatorContract.networks[NetworkNum].address)
+let kycInstance = new Web3.eth.Contract(KycContract.abi, KycContract.networks[NetworkNum].address)
+//let ownersInstance = new Web3.eth.Contract(OwnersContract.abi, OwnersContract.networks[3].address)
 
 
 let getAccounts = async () => {
@@ -96,13 +93,13 @@ let submitCompany = async (address,company_name,company_address,register_id) => 
 };
 
 
-let submitCustomer = async (account_address,tz) => {
+let submitCustomer = async (account_address,id) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         log.info('submitCustomer')
-//        const res = await regulatorInstance.methods.submitConsumer(account_address ,tz).call({ from: accounts[0], gas: 4000000 });
-        const res = await regulatorInstance.methods.submitConsumer(account_address ,tz).send({ from: accounts[0], gas: 4000000 });
-//           const res = await testInstance.methods.submitConsumer(account_address ,tz).call({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
+        const res = await regulatorInstance.methods.submitConsumer(account_address ,id).send({ from: accounts[0], gas: 4000000 });
+//           const res = await testInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
 
         log.info(res)
 
@@ -115,13 +112,13 @@ let submitCustomer = async (account_address,tz) => {
     }
 };
 
-let createConsentRequest = async (tz,company_registry_id,KYC_manager_registry_id) => {
+let createConsentRequest = async (id,company_registry_id,kyc_issuer_registry_id) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         log.info('createConsentRequest')
-//        const res = await regulatorInstance.methods.submitConsumer(account_address ,tz).call({ from: accounts[0], gas: 4000000 });
-        const res = await regulatorInstance.methods.createConsentRequest(tz,company_registry_id,KYC_manager_registry_id).send({ from: accounts[0], gas: 4000000 });
-//           const res = await testInstance.methods.submitConsumer(account_address ,tz).call({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
+        const res = await regulatorInstance.methods.createConsentRequest(id,company_registry_id,kyc_issuer_registry_id).send({ from: accounts[0], gas: 4000000 });
+//           const res = await testInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
 
 
 
@@ -134,13 +131,13 @@ let createConsentRequest = async (tz,company_registry_id,KYC_manager_registry_id
 };
 
 
-let finishConsentRequest = async (tz,company_registry_id,KYC_manager_registry_id,finished) => {
+let finishConsentRequest = async (id,company_registry_id,kyc_issuer_registry_id,finished) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         log.info('finishConsentRequest')
-//        const res = await regulatorInstance.methods.submitConsumer(account_address ,tz).call({ from: accounts[0], gas: 4000000 });
-        const res = await regulatorInstance.methods.finishConsentRequest(tz,company_registry_id,KYC_manager_registry_id,finished).send({ from: accounts[0], gas: 4000000 });
-//           const res = await testInstance.methods.submitConsumer(account_address ,tz).call({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
+        const res = await regulatorInstance.methods.finishConsentRequest(id,company_registry_id,kyc_issuer_registry_id,finished).send({ from: accounts[0], gas: 4000000 });
+//           const res = await testInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
 
 
 
@@ -154,13 +151,13 @@ let finishConsentRequest = async (tz,company_registry_id,KYC_manager_registry_id
 
 
 /*
-let getConsentRequestsbyCompany = async (tz,company_registry_id) => {
+let getConsentRequestsbyCompany = async (id,company_registry_id) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         log.info('submitCustomer')
-//        const res = await regulatorInstance.methods.submitConsumer(account_address ,tz).call({ from: accounts[0], gas: 4000000 });
-        const res = await regulatorInstance.methods.getConsentRequestsbyCompany(tz,company_registry_id).call({ from: accounts[0], gas: 4000000 });
-//           const res = await testInstance.methods.submitConsumer(account_address ,tz).call({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
+        const res = await regulatorInstance.methods.getConsentRequestsbyCompany(id,company_registry_id).call({ from: accounts[0], gas: 4000000 });
+//           const res = await testInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
 
         log.info(res)
 
@@ -177,14 +174,14 @@ let getConsentRequests = async () => {
     try {
         const accounts = await Web3.eth.getAccounts();
         log.info('getConsentRequests')
-//        const res = await regulatorInstance.methods.submitConsumer(account_address ,tz).call({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
         const res = await regulatorInstance.methods.getConsentRequests().call({ from: accounts[0], gas: 4000000 });
-//           const res = await testInstance.methods.submitConsumer(account_address ,tz).call({ from: accounts[0], gas: 4000000 });
+//           const res = await testInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
         log.info(res.length)
         let requests = [];
 
         for (let i = 0; i < res.length; i++) {
-          requests[i] = { company_id: res[i][0], tz: Web3.utils.hexToUtf8(res[i][1]),kyc_manager_id: res[i][2],performed: res[i][3] ,perform_stamp :res[i][4]};
+          requests[i] = { company_id: res[i][0], id: Web3.utils.hexToUtf8(res[i][1]),kyc_manager_id: res[i][2],performed: res[i][3] ,perform_stamp :res[i][4]};
         }
         log.info(requests)
 
@@ -198,11 +195,11 @@ let getConsentRequests = async () => {
 };
 
 
-let getConsumer = async (tz) => {
+let getConsumer = async (id) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         log.info('getConsumer')
-        const res = await regulatorInstance.methods.getConsumer(tz).call({ from: accounts[0], gas: 4000000 });
+        const res = await regulatorInstance.methods.getConsumer(id).call({ from: accounts[0], gas: 4000000 });
         log.info(res)
 
         return Promise.resolve(res);
@@ -216,17 +213,19 @@ let getConsumer = async (tz) => {
 
 
 
-let submitKYC = async (tz,fullname,address,bank_account,creadit_card_number,smoking,isAlergic,company_registry_id) => {
+let submitKYC = async (fullname,id,issued_country, laddress, sex,
+                                       date_of_birth,  smoking,company_registry_id) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         const defacc=Web3.eth.defaultAccount;
         log.info('submitKYC')
 
         const res = await regulatorInstance.methods.performFullKYC(
-        fullname,tz,address, bank_account, creadit_card_number, smoking,isAlergic,   company_registry_id
+        fullname,id,issued_country, laddress, sex,
+                date_of_birth,  smoking,     company_registry_id
         ).send({ from: accounts[0], gas: 4000000 });
 //        const res = await regulatorInstance.methods.performFullKYC(
-//        accounts[1],"test cast",tz,'herzel 12 TA', "213232", "2134 1234 1234 2132", "smoking",false,   1
+//        accounts[1],"test cast",id,'herzel 12 TA', "213232", "2134 1234 1234 2132", "smoking",false,   1
 //        ).call({ from: accounts[0], gas: 4000000 });
           log.info(res)
 
@@ -240,18 +239,20 @@ let submitKYC = async (tz,fullname,address,bank_account,creadit_card_number,smok
     }
 };
 
-let getConsumerAttributePermission = async (tz,company_registry_id, attributeName) => {
+let getConsumerAttributePermission = async (id,company_registry_id, attributeName) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         const defacc=Web3.eth.defaultAccount;
         log.info('getConsumerAttributePermission')
-//        log.info(tz)
+        log.info(id);
+        log.info(company_registry_id);
+        log.info(attributeName);
 //        log.info(company_registry_id)
 //        log.info(attributeName)
-         const res = await regulatorInstance.methods.getConsumerAttributePermission( tz,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
+         const res = await regulatorInstance.methods.getConsumerAttributePermission( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
 
 
-//        const res = await regulatorInstance.methods.getConsumerAttributePermission( tz,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.getConsumerAttributePermission( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
 //        log.info(res)
 
         return Promise.resolve(res);
@@ -263,14 +264,14 @@ let getConsumerAttributePermission = async (tz,company_registry_id, attributeNam
 };
 
 
-let getCurrentKYCPerformer = async (tz) => {
+let getCurrentKYCissuer = async (id) => {
     try {
         const accounts = await Web3.eth.getAccounts();
-       log.info('getCurrentKYCPerformer')
-        log.info(tz)
+       log.info('getCurrentKYCPIssuer')
+        log.info(id)
 //        log.info(company_registry_id)
 //        log.info(attributeName)
-         const res = await regulatorInstance.methods.getCurrentKYCPerformer( tz).call({ from: accounts[0], gas: 4000000 });
+         const res = await regulatorInstance.methods.getCurrentKYCPIssuer( id).call({ from: accounts[0], gas: 4000000 });
 
 
 
@@ -283,18 +284,18 @@ let getCurrentKYCPerformer = async (tz) => {
 };
 
 
-let getConsumerAttributeValue = async (tz,company_registry_id, attributeName) => {
+let getConsumerAttributeValue = async (id,company_registry_id, attributeName) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         const defacc=Web3.eth.defaultAccount;
         log.info('getConsumerAttributePermission')
-//        log.info(tz)
+//        log.info(id)
 //        log.info(company_registry_id)
 //        log.info(attributeName)
-         const res = await regulatorInstance.methods.getConsumerAttributeValue( tz,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
+         const res = await regulatorInstance.methods.getConsumerAttributeValue( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
 
 
-//        const res = await regulatorInstance.methods.getConsumerAttributePermission( tz,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.getConsumerAttributePermission( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
 //        log.info(res)
 
         return Promise.resolve(Web3.utils.hexToUtf8(res));
@@ -305,18 +306,18 @@ let getConsumerAttributeValue = async (tz,company_registry_id, attributeName) =>
     }
 };
 
-let getConsumerAttributeName = async (tz,company_registry_id, attributeRow) => {
+let getConsumerAttributeName = async (id,company_registry_id, attributeRow) => {
     try {
         const accounts = await Web3.eth.getAccounts();
 
         log.info('getConsumerAttributePermission')
-//        log.info(tz)
+//        log.info(id)
 //        log.info(company_registry_id)
 //        log.info(attributeName)
-         const res = await regulatorInstance.methods.getConsumerAttributeName( tz, attributeRow).call({ from: accounts[0], gas: 4000000 });
+         const res = await regulatorInstance.methods.getConsumerAttributeName( id, attributeRow).call({ from: accounts[0], gas: 4000000 });
 
 
-//        const res = await regulatorInstance.methods.getConsumerAttributePermission( tz,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.getConsumerAttributePermission( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
         log.info(res)
 
         return Promise.resolve(Web3.utils.hexToUtf8(res));
@@ -328,21 +329,27 @@ let getConsumerAttributeName = async (tz,company_registry_id, attributeRow) => {
 };
 
 
-let getConsumerAttributeList = async (tz,company_registry_id) => {
+let getConsumerAttributeList = async (id,company_registry_id) => {
     try {
         const accounts = await Web3.eth.getAccounts();
 
         log.info('getConsumerAttributePermission')
-//        log.info(tz)
+//        log.info(id)
 //        log.info(company_registry_id)
 //        log.info(attributeName)
-         const res = await regulatorInstance.methods.getConsumerAttributeList( tz,company_registry_id).call({ from: accounts[0], gas: 4000000 });
+         const res = await regulatorInstance.methods.getConsumerAttributeList( id,company_registry_id).call({ from: accounts[0], gas: 4000000 });
+         let requests = [];
+
+         for (let i = 0; i < res.length; i++) {
+           requests[i] =   Web3.utils.hexToUtf8(res[i]);
+         }
+         log.info(requests)
 
 
-//        const res = await regulatorInstance.methods.getConsumerAttributePermission( tz,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
-        log.info(res)
+//        const res = await regulatorInstance.methods.getConsumerAttributePermission( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
 
-        return Promise.resolve(res);
+
+        return Promise.resolve(requests);
     } catch (err) {
         log.info('err');
         log.info(err);
@@ -350,14 +357,14 @@ let getConsumerAttributeList = async (tz,company_registry_id) => {
     }
 };
 
-let setConsumerAttributePermission = async (tz,company_registry_id, attributeName,attributepermission) => {
+let setConsumerAttributePermission = async (id,company_registry_id, attributeName,attributepermission) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         const defacc=Web3.eth.defaultAccount;
         log.info('setConsumerAttributePermission')
         log.info(attributeName)
         log.info(attributepermission)
-        const res = await regulatorInstance.methods.addCompanionPermission(tz , company_registry_id, attributeName,   attributepermission)
+        const res = await regulatorInstance.methods.addCompanionPermission(id , company_registry_id, attributeName,   attributepermission)
         .send({ from: accounts[0], gas: 4000000 });
         log.info(res)
 
@@ -371,13 +378,14 @@ let setConsumerAttributePermission = async (tz,company_registry_id, attributeNam
 
 
 
-//let addCompanyRelation = async (customer_address,tz) => {
+
+//let addCompanyRelation = async (customer_address,id) => {
 //    try {
 //        const accounts = await Web3.eth.getAccounts();
 //        const defacc=Web3.eth.defaultAccount;
 //        log.info('addCompanyRelation')
 //
-//        const res = await regulatorInstance.methods.addCompanyRelation(account_address ,tz).send({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.addCompanyRelation(account_address ,id).send({ from: accounts[0], gas: 4000000 });
 //        log.info(res)
 //
 //        return Promise.resolve(res);
@@ -388,13 +396,13 @@ let setConsumerAttributePermission = async (tz,company_registry_id, attributeNam
 //    }
 //};
 
-//let addCompanionPermissionByBaseCompanyAndAttribute = async (company_address,tz,attribute_name) => {
+//let addCompanionPermissionByBaseCompanyAndAttribute = async (company_address,id,attribute_name) => {
 //    try {
 //        const accounts = await Web3.eth.getAccounts();
 //        const defacc=Web3.eth.defaultAccount;
 //        log.info('addCompanionPermissionByBaseCompanyAndAttribute')
 //
-//        const res = await regulatorInstance.methods.addCompanionPermissionByBaseCompanyAndAttribute(company_address,tz,attribute_name).send({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.addCompanionPermissionByBaseCompanyAndAttribute(company_address,id,attribute_name).send({ from: accounts[0], gas: 4000000 });
 //        log.info(res)
 //
 //        return Promise.resolve(res);
@@ -406,13 +414,13 @@ let setConsumerAttributePermission = async (tz,company_registry_id, attributeNam
 //};
 
 
-//let dummyFunk = async (tz,company_address,attribute_name,attribute_permission) => {
+//let dummyFunk = async (id,company_address,attribute_name,attribute_permission) => {
 //    try {
 //        const accounts = await Web3.eth.getAccounts();
 //        const defacc=Web3.eth.defaultAccount;
 //        log.info('addCompanionPermissionByBaseCompanyAndAttribute')
 //
-//        const res = await regulatorInstance.methods.setConsumerAttributePermission(ttz,company_address,attribute_name,attribute_permission).send({ from: accounts[0], gas: 4000000 });
+//        const res = await regulatorInstance.methods.setConsumerAttributePermission(tid,company_address,attribute_name,attribute_permission).send({ from: accounts[0], gas: 4000000 });
 //        log.info(res)
 //
 //        return Promise.resolve(res);
@@ -425,22 +433,22 @@ let setConsumerAttributePermission = async (tz,company_registry_id, attributeNam
 
 
 
-//    return Registry_instance.getConsumerAttributePermission(tz,account,'tz',{from: accounts[1]});
+//    return Registry_instance.getConsumerAttributePermission(id,account,'id',{from: accounts[1]});
 //    const data = await getConsumerAttributePermission(address);
 ////    const str = JSON.stringify(data, null, 2);
 //
 //   it("test companion  permission change ", function() {
 //        var Registry_instance;
-//        var tz='039342444';
+//        var id='039342444';
 //        return Regulator.deployed().then(function(instance) {
 //            Registry_instance = instance;
-//            return Registry_instance.getConsumerAttributePermission(tz,account,'tz',{from: accounts[1]});
+//            return Registry_instance.getConsumerAttributePermission(id,account,'id',{from: accounts[1]});
 //        }).then(function (attrperm) {
 //            console.log("attrperm:",attrperm.valueOf());
 //            assert.equal(attrperm, 1, "attrvalue should be 1 !");
-//            return Registry_instance.changeCompanionPermissionByCustomer(tz,account,accounts[1],'tz',0,{from: account});
+//            return Registry_instance.changeCompanionPermissionByCustomer(id,account,accounts[1],'id',0,{from: account});
 //        }).then(function (tx) {
-//            return Registry_instance.getConsumerAttributePermission(tz,account,'tz',{from: accounts[1]});
+//            return Registry_instance.getConsumerAttributePermission(id,account,'id',{from: accounts[1]});
 //        }).then(function (attrperm) {
 //            console.log("attrperm:",attrperm.valueOf());
 //            assert.equal(attrperm.valueOf(), 0, "attrvalue should be 0 !");
@@ -472,6 +480,7 @@ export {
          finishConsentRequest,
          getConsumer ,
          getConsentRequests,
-         getCurrentKYCPerformer,
+         getCurrentKYCissuer,
+
 
 };

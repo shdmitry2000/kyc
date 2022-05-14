@@ -15,7 +15,7 @@ import {
      finishConsentRequest,
      getConsumer ,
      getConsentRequests,
-     getCurrentKYCPerformer,
+     getCurrentKYCissuer,
     } from '../service/regulator';
 import log from "../utils/logger";
 
@@ -27,27 +27,29 @@ const zero_address = "0x0000000000000000000000000000000000000000";
 ///api/organizations/new
 ///api/organizations/{company_id}/consent/request   //submit consent request
 ////request permissions for user kyc
-///api/organizations/{register_id}/customers/{tz}/{attribut}/permission
-///api/organizations/{register_id}/customers/{tz}/{attribut}/value
-///api/organizations/{register_id}/customers/{tz}/attribute/{row}/name
-///api/organizations/{register_id}/customers/{tz}/attribute/list
-///api/organizations/{register_id}/customers/{tz}/kyc
+///api/organizations/{register_id}/customers/{id}/{attribut}/permission
+///api/organizations/{register_id}/customers/{id}/{attribut}/value
+///api/organizations/{register_id}/customers/{id}/attribute/{row}/name
+///api/organizations/{register_id}/customers/{id}/attribute/list
+///api/organizations/{register_id}/customers/{id}/kyc
 
 //-----------------------------
 
 //
 ///api/customers/  ????????????
-///api/customers/:tz //get customer data
+///api/customers/:id //get customer data
 ///api/customers/new  // create new customer
 ///api/customers/kyc/submit:  //submit KYC
-///api/customers/{tz}/organizations/{register_id}/attribute/{attr_name}/permission
+///api/customers/{id}/organizations/{register_id}/attribute/{attr_name}/permission
 
 //--------------------------
 
-///api/customers/:tz/kyc/update
-///api/customers/{tz}/consent/request   //submit concent request
+///api/customers/:id/kyc/update
+///api/customers/{id}/consent/request   //submit concent request
 
-///api/organizations/:register_id/customers/:tz/kyc/request  ???
+///api/organizations/:register_id/customers/:id/kyc/request  ???
+
+
 
 
 /**
@@ -56,8 +58,8 @@ const zero_address = "0x0000000000000000000000000000000000000000";
  *   get:
  *     tags:
  *       - utility
- *     summary:  return a list of companies.
- *     description: return a list of companies.
+ *     summary:  list od addresses on chain.
+ *     description: list od addresses on chain..
  *     responses:
  *       200:
  *         description: A list of addressses.
@@ -95,8 +97,8 @@ router.get('/accounts', async (req, res, next) => {
  *   get:
  *     tags:
  *       - Company
- *     summary:  return a list of companies.
- *     description: return a list of companies.
+ *     summary:  return a list of company id's.
+ *     description: return a list of company id's.
  *     responses:
  *       200:
  *         description: A list of addressses.
@@ -135,6 +137,8 @@ router.get('/organizations', async (req, res, next) => {
 *  get:
 *    tags:
 *      - Company
+*    summary:  return a  company data for existing id.
+*    description: return a  company data for existing id.
 *    parameters:
 *      - name: register_id
 *        in: path
@@ -186,6 +190,8 @@ router.get('/organizations', async (req, res, next) => {
 *  post:
 *     tags:
 *       - admin
+*     summary:  add new organisation (bank) to a system.
+*     description: add new organisation (bank) to a system.
  *     requestBody:
  *       required: true
  *       content:
@@ -257,14 +263,16 @@ router.post('/organizations/new', async (req, res, next) => {
 
 /**
 * @openapi
-* /api/customers/{tz}:
+* /api/customers/{id}:
 *  get:
 *     tags:
 *       - Customer
+*     summary:  get customer data >  registred + hasKYC.
+*     description: get customer data>  registred + hasKYC..
 *     parameters:
-*       - name: tz
+*       - name: id
 *         in: path
-*         description: get the data of company
+*         description: customer id
 *         required: true
 *         schema:
 *           type: string
@@ -286,14 +294,14 @@ router.post('/organizations/new', async (req, res, next) => {
  *                         description: The array of addresses.
 */
 
-router.get('/customers/:tz', async (req, res, next) => {
+router.get('/customers/:id', async (req, res, next) => {
   try {
 //  const token = req.param('token');
     log.info("submitcustomer begin")
-    let tz = req.params.tz;
-    log.info(tz)
+    let id = req.params.id;
+    log.info(id)
 //    let account_address = req.body.account_address;
-    const data = await getConsumer(tz);
+    const data = await getConsumer(id);
 
 
     res.json({
@@ -310,14 +318,16 @@ router.get('/customers/:tz', async (req, res, next) => {
 
 /**
 * @openapi
-* /api/customers/{tz}/kyc_manager:
+* /api/customers/{id}/kyc_issuer:
 *  get:
 *     tags:
 *       - Customer
+*     summary:  get customer kyc issuer.
+*     description: get customer kyc issuer.
 *     parameters:
-*       - name: tz
+*       - name: id
 *         in: path
-*         description: get the data of company
+*         description: customer id
 *         required: true
 *         schema:
 *           type: string
@@ -339,14 +349,14 @@ router.get('/customers/:tz', async (req, res, next) => {
  *                         description: The array of addresses.
 */
 
-router.get('/customers/:tz/kyc_manager', async (req, res, next) => {
+router.get('/customers/:id/kyc_issuer', async (req, res, next) => {
   try {
 //  const token = req.param('token');
     log.info("submitcustomer begin")
-    let tz = req.params.tz;
-    log.info(tz)
+    let id = req.params.id;
+    log.info(id)
 //    let account_address = req.body.account_address;
-    const data = await getCurrentKYCPerformer(tz);
+    const data = await getCurrentKYCissuer(id);
 
 
     res.json({
@@ -364,6 +374,8 @@ router.get('/customers/:tz/kyc_manager', async (req, res, next) => {
 *  post:
 *     tags:
 *       - Company
+*     summary:  add new customer(register customer).
+*     description: add new customer(register customer).
  *     requestBody:
  *       required: true
  *       content:
@@ -371,9 +383,9 @@ router.get('/customers/:tz/kyc_manager', async (req, res, next) => {
  *           schema:
  *             type: object
  *             properties:
-    *              tz:
+    *              id:
     *                type: string
-    *                description: get the tz  of customer
+    *                description: get the id  of customer
 *     responses:
  *       201:
  *         description: Created
@@ -400,12 +412,12 @@ router.post('/customers/new', async (req, res, next) => {
   try {
 //  const token = req.param('token');
     log.info("customers/new begin")
-    let tz = req.body.tz;
+    let id = req.body.id;
     let account_address=zero_address;
 //    let account_address = req.body.account_address;
-    log.info(tz)
+    log.info(id)
     log.info(account_address)
-    const data = await submitCustomer(account_address,tz);
+    const data = await submitCustomer(account_address,id);
 
     res.json({
           success: true,
@@ -425,6 +437,8 @@ router.post('/customers/new', async (req, res, next) => {
 *  post:
 *     tags:
 *       - Company
+*     summary:  submit KYC data for customer.
+*     description: submit KYC data for customer.
  *     requestBody:
  *       required: true
  *       content:
@@ -432,28 +446,28 @@ router.post('/customers/new', async (req, res, next) => {
  *           schema:
  *             type: object
  *             properties:
-    *              tz:
+    *              id:
     *                type: string
-    *                description: tz
+    *                description: id
+    *              issued_country:
+    *                type: string
+    *                description: cbank_account
     *              fullname:
     *                type: string
     *                description: fullname
     *              address:
     *                type: string
     *                description: address
-    *              bank_account:
-    *                type: string
-    *                description: cbank_account
-    *              creadit_card_number:
+    *              date_of_birth:
     *                type: string
     *                description: creadit_card_number
     *              smoking:
+    *                type: boolean
+    *                description: smoking
+   *              sex:
     *                type: string
     *                description: smoking
-    *              isAlergic:
-    *                type: boolean
-    *                description: isAlergic
-    *              kyc_manager_registry_id:
+    *              kyc_issuer_registry_id:
     *                type: integer
     *                description: company_registry_id
 *     responses:
@@ -482,17 +496,22 @@ router.post('/customers/kyc/submit', async (req, res, next) => {
 //  const token = req.param('token');
     log.info("submitKYC begin")
 //    let on_chain_address=req.body.on_chain_address;
-    let tz = req.body.tz;
+    let id = req.body.id;
     let fullname= req.body.fullname;
-    let kyc_manager_registry_id=req.body.kyc_manager_registry_id;
-
-    let address= req.body.address;
-    let bank_account=req.body.bank_account;
-    let creadit_card_number=req.body.creadit_card_number;
+    let issued_country =req.body.issued_country;
+    let date_of_birth=req.body.date_of_birth;
+    let sex=req.body.sex;
     let smoking=req.body.smoking;
-    let isAlergic=req.body.isAlergic;
+    let kyc_issuer_registry_id=req.body.kyc_issuer_registry_id;
 
-    const data = await submitKYC(tz,fullname,address,bank_account,creadit_card_number,smoking,isAlergic,kyc_manager_registry_id);
+    let laddress= req.body.address;
+
+
+
+
+
+    const data = await submitKYC(fullname,id,issued_country, laddress, sex,
+                                        date_of_birth,smoking,kyc_issuer_registry_id);
 
     res.json({
       success: true,
@@ -511,6 +530,8 @@ router.post('/customers/kyc/submit', async (req, res, next) => {
 *  post:
 *     tags:
 *       - Company
+*     summary:  request consent from customer.used via KYC issuer.
+*     description: request consent from customer.used via KYC issuer.
 *     parameters:
 *      - name: register_id
 *        in: path
@@ -525,12 +546,12 @@ router.post('/customers/kyc/submit', async (req, res, next) => {
  *           schema:
  *             type: object
  *             properties:
-    *              tz:
+    *              id:
     *                type: string
-    *                description: tz
-    *              kyc_manager_registry_id:
+    *                description: id
+    *              kyc_issuer_registry_id:
     *                type: string
-    *                description: tz
+    *                description: id
 *     responses:
  *       201:
  *         description: Created
@@ -558,13 +579,13 @@ router.post('/organizations/:register_id/consentrequest/new', async (req, res, n
   try {
 //  const token = req.param('token');
     log.info("createConsentRequest begin")
-     let tz = req.body.tz;
+     let id = req.body.id;
      let company_registry_id=req.params.register_id;
-     let kyc_manager_registry_id=req.body.kyc_manager_registry_id;
-     log.info(tz)
+     let kyc_issuer_registry_id=req.body.kyc_issuer_registry_id;
+     log.info(id)
      log.info(company_registry_id)
 
-     const data = await createConsentRequest(tz,company_registry_id,kyc_manager_registry_id);
+     const data = await createConsentRequest(id,company_registry_id,kyc_issuer_registry_id);
 
      res.json({
        success: true,
@@ -583,6 +604,8 @@ router.post('/organizations/:register_id/consentrequest/new', async (req, res, n
 *  post:
 *     tags:
 *       - Company
+*     summary:  close request consent from customer by report of finish the operation .performed by   KYC issuer.
+*     description: close request consent from customer  by report of finish the operation .performed by   KYC issuer.
 *     parameters:
 *      - name: register_id
 *        in: path
@@ -597,12 +620,12 @@ router.post('/organizations/:register_id/consentrequest/new', async (req, res, n
  *           schema:
  *             type: object
  *             properties:
-    *              tz:
+    *              id:
     *                type: string
-    *                description: tz
-    *              kyc_manager_registry_id:
+    *                description: id
+    *              kyc_issuer_registry_id:
     *                type: string
-    *                description: tz
+    *                description: id
 *     responses:
  *       201:
  *         description: Created
@@ -630,13 +653,13 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
   try {
 //  const token = req.param('token');
     log.info("finishConsentRequest begin")
-     let tz = req.body.tz;
+     let id = req.body.id;
      let company_registry_id=req.params.register_id;
-     let kyc_manager_registry_id=req.body.kyc_manager_registry_id;
-     log.info(tz)
+     let kyc_issuer_registry_id=req.body.kyc_issuer_registry_id;
+     log.info(id)
      log.info(company_registry_id)
 
-     const data = await finishConsentRequest(tz,company_registry_id,kyc_manager_registry_id,true);
+     const data = await finishConsentRequest(id,company_registry_id,kyc_issuer_registry_id,true);
 
      res.json({
        success: true,
@@ -651,72 +674,6 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 
 
 
-///**
-//* @openapi
-//* /api/customers/consentrequest/new:
-//*  post:
-//*     tags:
-//*       - Company
-// *     requestBody:
-// *       required: true
-// *       content:
-// *         application/json:
-// *           schema:
-// *             type: object
-// *             properties:
-//    *              tz:
-//    *                type: string
-//    *                description: tz
-//    *              company_registry_id:
-//    *                type: string
-//    *                description: company register id
-//    *              kyc_manager_registry_id:
-//    *                type: string
-//    *                description: company register id
-//*     responses:
-// *       201:
-// *         description: Created
-// *         content:
-// *           application/json:
-// *             schema:
-// *               type: object
-// *               properties:
-// *                 data:
-// *                   type: object
-// *                   properties:
-// *                     id:
-// *                       type: integer
-// *                       description: The user ID.
-// *                       example: 0
-// *                     name:
-// *                       type: string
-// *                       description: The user's name.
-// *                       example: Leanne Graham
-//*/
-//
-//router.post('/customers/consentrequest/new', async (req, res, next) => {
-//  try {
-////  const token = req.param('token');
-//    log.info("createConsentRequest begin")
-//    let tz = req.body.tz;
-//    let company_registry_id=req.body.company_registry_id;
-//    let kyc_manager_registry_id=req.body.kyc_manager_registry_id;
-//    log.info(tz)
-//    log.info(company_registry_id)
-//
-//    const data = await createConsentRequest(tz,company_registry_id,kyc_manager_registry_id);
-//
-//    res.json({
-//      success: true,
-//      message: 'submitKYC is confirmed',
-//      data
-//    });
-//  } catch (err) {
-//    res.status(500);
-//    next(err);
-//  }
-//});
-
 
 /**
 * @openapi
@@ -724,6 +681,8 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 *  get:
 *    tags:
 *      - Company
+*    summary:  list of  request consents  .include preformed flag and performance date.
+*    description: list of  request consents  .include preformed flag and performance date.
 *    responses:
 *      200:
 *         description: Success
@@ -759,10 +718,12 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 
 /**
 * @openapi
-* /api/organizations/{register_id}/customers/{tz}/{attributeName}/permission:
+* /api/organizations/{register_id}/customers/{id}/{attributeName}/permission:
 *  get:
 *    tags:
 *      - Company
+*    summary:  get permission for company by attribute.performs  on company id+ customer id  .
+*    description: get permission for company by attribute.performs  on company id+ customer id  .
 *    parameters:
 *      - name: register_id
 *        in: path
@@ -770,15 +731,15 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 *        required: true
 *        schema:
 *          type: integer
-*      - name: tz
+*      - name: id
 *        in: path
-*        description: get the data of company
+*        description: customer id
 *        required: true
 *        schema:
 *          type: string
 *      - name: attributeName
 *        in: path
-*        description: get the data of company
+*        description: attribut name
 *        required: true
 *        schema:
 *          type: string
@@ -797,16 +758,16 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 *                    type: string
 *                    description: company local address
 */
-   router.get('/organizations/:register_id/customers/:tz/:attributeName/permission', async (req, res, next) => {
+   router.get('/organizations/:register_id/customers/:id/:attributeName/permission', async (req, res, next) => {
   try {
     log.info("register_id")
     let register_id = req.params.register_id;
-    let tz = req.params.tz;
+    let id = req.params.id;
     let attributeName = req.params.attributeName;
     log.info(register_id)
-    log.info(tz)
+    log.info(id)
     log.info(attributeName)
-    const data = await getConsumerAttributePermission(tz,register_id, attributeName);
+    const data = await getConsumerAttributePermission(id,register_id, attributeName);
 //    const str = JSON.stringify(data, null, 2);
     log.info(data)
     res.json({
@@ -821,10 +782,12 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 
 /**
 * @openapi
-* /api/organizations/{register_id}/customers/{tz}/{attribut}/value:
+* /api/organizations/{register_id}/customers/{id}/{attribut}/value:
 *  get:
 *    tags:
 *      - Company
+*    summary:  get attribute value for company by attribute name.performs  on company id+ customer id  .
+*    description: get attribute value for company by attribute name.performs  on company id+ customer id .
 *    parameters:
 *      - name: register_id
 *        in: path
@@ -832,15 +795,15 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 *        required: true
 *        schema:
 *          type: string
-*      - name: tz
+*      - name: id
 *        in: path
-*        description: get the data of company
+*        description: customer id
 *        required: true
 *        schema:
 *          type: string
 *      - name: attribut
 *        in: path
-*        description: get the data of company
+*        description: attribut name
 *        required: true
 *        schema:
 *          type: string
@@ -859,14 +822,14 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 *                    type: string
 *                    description: company local address
 */
-   router.get('/organizations/:register_id/customers/:tz/:attributeName/value', async (req, res, next) => {
+   router.get('/organizations/:register_id/customers/:id/:attributeName/value', async (req, res, next) => {
   try {
     log.info("register_id")
     let register_id = req.params.register_id;
-    let tz = req.params.tz;
+    let id = req.params.id;
     let attributeName = req.params.attributeName;
     log.info(register_id)
-    const data = await getConsumerAttributeValue(tz,register_id, attributeName);
+    const data = await getConsumerAttributeValue(id,register_id, attributeName);
 //    const str = JSON.stringify(data, null, 2);
     log.info(data)
     res.json({
@@ -880,10 +843,12 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 
 /**
 * @openapi
-* /api/organizations/{register_id}/customers/{tz}/attribute/{attributeRow}/name:
+* /api/organizations/{register_id}/customers/{id}/attribute/{attributeRow}/name:
 *  get:
 *    tags:
 *      - Company
+*    summary:  get attribute name by attribut place for company and customer id.  .
+*    description:  get attribute name by attribut place for company and customer id.  .
 *    parameters:
 *      - name: register_id
 *        in: path
@@ -891,15 +856,15 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 *        required: true
 *        schema:
 *          type: string
-*      - name: tz
+*      - name: id
 *        in: path
-*        description: get the data of company
+*        description: customer id
 *        required: true
 *        schema:
 *          type: string
 *      - name: attributeRow
 *        in: path
-*        description: get the data of company
+*        description: number of attribut row
 *        required: true
 *        schema:
 *          type: integer
@@ -918,14 +883,14 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 *                    type: string
 *                    description: company local address
 */
-   router.get('/organizations/:register_id/customers/:tz/attribute/:attributeRow/name', async (req, res, next) => {
+   router.get('/organizations/:register_id/customers/:id/attribute/:attributeRow/name', async (req, res, next) => {
   try {
     log.info("register_id")
     let register_id = req.params.register_id;
-    let tz = req.params.tz;
+    let id = req.params.id;
     let attributeRow = req.params.attributeRow;
     log.info(register_id)
-    const data = await getConsumerAttributeName(tz,register_id, attributeRow);
+    const data = await getConsumerAttributeName(id,register_id, attributeRow);
 //    const str = JSON.stringify(data, null, 2);
     log.info(data)
     res.json({
@@ -941,14 +906,16 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 
 /**
 * @openapi
-* /api/organizations/{register_id}/customers/{tz}/attribute/list:
+* /api/organizations/{register_id}/customers/{id}/attribute/list:
 *  get:
 *    tags:
 *      - Company
+*    summary:  get attribute list  for company and customer id.  .
+*    description:  get attribute list  for company and customer id. .
 *    parameters:
-*      - name: tz
+*      - name: id
 *        in: path
-*        description: get the data of company
+*        description: customer id
 *        required: true
 *        schema:
 *          type: string
@@ -973,13 +940,13 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 *                    type: string
 *                    description: company local address
 */
-   router.get('/organizations/:register_id/customers/:tz/attribute/list', async (req, res, next) => {
+   router.get('/organizations/:register_id/customers/:id/attribute/list', async (req, res, next) => {
   try {
     log.info("register_id")
     let register_id = req.params.register_id;
-    let tz = req.params.tz;
+    let id = req.params.id;
     log.info(register_id)
-    const data = await getConsumerAttributeList(tz,register_id);
+    const data = await getConsumerAttributeList(id,register_id);
 //    const str = JSON.stringify(data, null, 2);
     log.info(data)
     res.json({
@@ -991,66 +958,20 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
   }
 });
 
-///**
-//* @openapi
-//* /api////api/organizations/{register_id}/customers/{tz}/kyc:
-//*  get:
-//*    tags:
-//*      - Company
-//*    parameters:
-//*      - name: register_id
-//*        in: path
-//*        description: company register id
-//*        required: true
-//*        schema:
-//*          type: string
-//*      - name: tz
-//*        in: path
-//*        description: get the data of company
-//*        required: true
-//*        schema:
-//*          type: string
-//*    responses:
-//*      200:
-//*         description: Success
-//*         content:
-//*           application/json:
-//*             schema:
-//*               type: object
-//*               properties:
-//*                 company_name:
-//*                    type: string
-//*                    description: company name
-//*                 company_address:
-//*                    type: string
-//*                    description: company local address
-//*/
-//   router.get('/organizations/:register_id/customers/:tz/kyc', async (req, res, next) => {
-//  try {
-//    log.info("register_id")
-//    let register_id = req.params.register_id;
-//    let tz = req.params.tz;
-//    log.info(register_id)
-//    data='not implemented yet';
-//    res.json({
-//           data,
-//     });
-//  } catch (err) {
-//    res.status(500);
-//    next(err);
-//  }
-//});
+
 
 /**
 * @openapi
-* /api/customers/{tz}/organizations/{company_id}/permission:
+* /api/customers/{id}/organizations/{company_id}/permission:
 *  post:
 *     tags:
 *       - Customer
+*     summary:  set permission for company by attribute.performs  on company id+ customer id  .
+*     description:  set permission for company by attribute.performs  on company id+ customer id  .
 *     parameters:
-*      - name: tz
+*      - name: id
 *        in: path
-*        description: tz of customer
+*        description: id of customer
 *        required: true
 *        schema:
 *          type: string
@@ -1095,19 +1016,19 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
  *                       example: Leanne Graham
 */
 
-router.post('/customers/:tz/organizations/:company_id/permission', async (req, res, next) => {
+router.post('/customers/:id/organizations/:company_id/permission', async (req, res, next) => {
   try {
 //  const token = req.param('token');
     log.info("permission begin")
     let company_registry_id = req.params.company_id;
-    let tz = req.params.tz;
+    let id = req.params.id;
     let attributeName = req.body.attributeName;
     let attributepermission = req.body.attributepermission;
     log.info(company_registry_id)
-    log.info(tz)
+    log.info(id)
     log.info(attributeName)
     log.info(attributepermission)
-    const data = await setConsumerAttributePermission(tz,company_registry_id, attributeName,attributepermission);
+    const data = await setConsumerAttributePermission(id,company_registry_id, attributeName,attributepermission);
     res.json({
       success: true,
       message: 'set permission is confirmed',

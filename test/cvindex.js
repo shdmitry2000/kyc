@@ -2,7 +2,7 @@
 // var PermissionExtender = artifacts.require("./PermissionExtender.sol");
 var KYC = artifacts.require("KYC");
 var Regulator = artifacts.require("Regulator");
-var Test = artifacts.require("Test");
+//var Test = artifacts.require("Test");
 
 var account;
 var accounts;
@@ -12,6 +12,7 @@ contract('Regulator', function(accounts) {
     console.log("accounts",accounts);
     // console.log('kyc address',KYC.address);
     accounts=accounts;
+    account=accounts[0];
     var Registry_instance;
     it("should be empty at the beginning", function() {
         return Regulator.deployed().then(function (instance) {
@@ -38,15 +39,17 @@ contract('Regulator', function(accounts) {
     it("should add customer at the beginning", function() {
         var Registry_instance;
         var id="039342444";
+        var regulatorAddress= account;
+;
         return Regulator.deployed().then(function(instance) {
             Registry_instance = instance;
-            return Registry_instance.getOwner.call();
-        }).then(function (regulatorAddress) {
-            account=regulatorAddress;
-            console.log("regulatorAddress:"+account);
-            return Registry_instance.submitConsumer(account ,id,{from: account});
+//            return Registry_instance.getOwner.call();
+//        }).then(function (regulatorAddress) {
+//            account=regulatorAddress;
+//            console.log("regulatorAddress:"+account);
+            return Registry_instance.submitConsumer(accounts[0] ,id,{from: account});
         }).then(function (result) {
-            console.log("result:",result);
+//            console.log("result:",result);
 //            assert.equal(result, 0, "submitConsumer shold return 0!");
             for (var i = 0; i < result.logs.length; i++) {
                 var log = result.logs[i];
@@ -362,7 +365,7 @@ it("check good permissions for test company  ", function() {
 
 
 
-
+/*
 contract('Test', function(accounts) {
 
     console.log("accounts",accounts);
@@ -471,7 +474,7 @@ contract('Test', function(accounts) {
 //
 //
 });
-
+*/
 
 
 

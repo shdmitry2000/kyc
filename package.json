@@ -13,7 +13,7 @@
     "cors": "^2.8.5",
     "jsonfile": "^5.0.0",
     "nodemon": "^2.0.15",
-    "solc": "^0.6.4",
+    "solc": "^0.8.13",
     "swagger-jsdoc": "^6.2.0",
     "swagger-ui-express": "^4.3.0",
     "truffle": "^5.5.7",
@@ -22,6 +22,7 @@
   },
   "scripts": {
     "start": " npm run build && nodemon ./dist/app.js",
+    "startup": "  nohup node ./dist/app.js &",
     "build": "babel src -d dist --copy-files",
     "swagger-autogen": "npm run build && nodemon ./dist/utils/swagger-auto.js",
     "dev": "cross-env NODE_OPTIONS='--openssl-legacy-provider' next dev"
