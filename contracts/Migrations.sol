@@ -1,5 +1,29 @@
 pragma solidity ^0.8.13;
 
+interface Update {
+    function implementationBefore() external view returns (address);
+    function implementationAfter() external view returns (address);
+    function migrateData() external;
+}
+
+
+/*
+
+contract UpdatableProxyShared is ProxyData, Ownable(0) {
+    function updateProxied(Update update)
+        public
+        onlyOwner
+    {
+        require(update.implementationBefore() == proxied);
+        proxied = update;
+        Update(this).migrateData();
+        proxied = update.implementationAfter();
+    }
+}
+
+*/
+
+
 contract Migrations {
   address public owner;
   uint public last_completed_migration;

@@ -6,7 +6,7 @@ import "./StringLibrary.sol";
 library KYCLib {
         using StringLibrary for string;
 
-        struct KombuchaStorage {
+        struct KYCStorage {
             bytes32[]   attributesList;
             mapping(string => mapping(uint16 => uint8)) permissions;
 
@@ -14,7 +14,7 @@ library KYCLib {
           mapping(string => bytes32)  attributes;
         }
 
-        function init(KombuchaStorage storage self, uint16 _kycPerformer,string memory fullname,string memory id,string memory issued_country,
+        function init(KYCStorage storage self, uint16 _kycPerformer,string memory fullname,string memory id,string memory issued_country,
                 string memory laddress, string memory sex, string memory date_of_birth,  bool  isSmoking) public {
                self.kycPerformer=_kycPerformer;
                // customer=_customer;
@@ -42,7 +42,7 @@ library KYCLib {
             }
 
 
-    function setAttributePermission(KombuchaStorage storage self,string memory  attributeName ,uint16 companion_id , uint8 permission)  public
+    function setAttributePermission(KYCStorage storage self,string memory  attributeName ,uint16 companion_id , uint8 permission)  public
         {
 
 
@@ -72,17 +72,17 @@ library KYCLib {
          }
 
 
-        function getAttributeValue(KombuchaStorage storage self,string memory attrName)  view public       returns (bytes32)
+        function getAttributeValue(KYCStorage storage self,string memory attrName)  view public       returns (bytes32)
             {
                 return self.attributes[attrName];
             }
 
-            function getKYCIssuer(KombuchaStorage storage self)  view   external  returns (uint16)
+            function getKYCIssuer(KYCStorage storage self)  view   external  returns (uint16)
             {
                 return self.kycPerformer;
             }
 
-            function getAttributeName(KombuchaStorage storage self,uint row)    view external   returns (bytes32)
+            function getAttributeName(KYCStorage storage self,uint row)    view external   returns (bytes32)
             {
                 if (row<self.attributesList.length)
                     return self.attributesList[row];
@@ -90,19 +90,19 @@ library KYCLib {
                     return "";
             }
 
-            function getAttributeLength(KombuchaStorage storage self)   view external   returns (uint)
+            function getAttributeLength(KYCStorage storage self)   view external   returns (uint)
             {
                 return self.attributesList.length;
             }
 
-            function getAttributeList(KombuchaStorage storage self)   external view  returns (bytes32[] memory)
+            function getAttributeList(KYCStorage storage self)   external view  returns (bytes32[] memory)
                 {
                     return self.attributesList;
                 }
 
 
 
-            function isAttributePermited(KombuchaStorage storage self,string memory  attrName,uint16 companion_id) view public  returns (uint8)
+            function isAttributePermited(KYCStorage storage self,string memory  attrName,uint16 companion_id) view public  returns (uint8)
             {
                     return (self.permissions[attrName][companion_id]);
 
@@ -110,7 +110,7 @@ library KYCLib {
 
 
 
-            function getAttribute(KombuchaStorage storage self,string memory attrName,uint16 companion_id) view public  returns (bytes32 )
+            function getAttribute(KYCStorage storage self,string memory attrName,uint16 companion_id) view public  returns (bytes32 )
             {
 
                 if (isAttributePermited(self,attrName, companion_id)!=0)

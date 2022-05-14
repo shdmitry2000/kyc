@@ -12,7 +12,7 @@ library KYCAttribLib {
 
 contract KYC is PermissionExtender {
 
-    using KYCLib for KYCLib.KombuchaStorage;
+    using KYCLib for KYCLib.KYCStorage;
 
     modifier onlyOperator {
             require(msg.sender == operatorContract);
@@ -20,7 +20,7 @@ contract KYC is PermissionExtender {
         }
 
     address operatorContract;
-    KYCLib.KombuchaStorage private self;
+    KYCLib.KYCStorage private self;
 
 
 
