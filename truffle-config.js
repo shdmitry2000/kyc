@@ -52,6 +52,7 @@ module.exports = {
        host: "127.0.0.1",     // Localhost (default: none)
        port: 7545,            // Standard Ethereum port (default: none)
        network_id: "*",       // Any network (default: none)
+       gas: 0x6691b7,
        },
        rinkeby: {
 
@@ -67,7 +68,7 @@ module.exports = {
                      skipDryRun: true
                    },
 
-      ropsten: {
+      ropsten_old: {
 
 
 
@@ -79,7 +80,20 @@ module.exports = {
               confirmations: 10,
               timeoutBlocks: 2000,
               skipDryRun: true
-            }
+            },
+      ropsten: {
+
+
+
+                    provider: function() {
+                      return new HDWalletProvider(mnemonic, "wss://eth-ropsten.alchemyapi.io/v2/P_rlamgm0Xce7MJzZCHpg4mnXUu5gzTZ")
+                    },
+                    network_id: 3,
+                    networkCheckTimeout: 10000,
+                    confirmations: 10,
+                    timeoutBlocks: 2000,
+                    skipDryRun: true
+                  }
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
@@ -126,7 +140,8 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-        version: "0.6.4",    // Fetch exact version from solc-bin (default: truffle's version)
+        version: "0.8.13",    // Fetch exact version from solc-bin (default: truffle's version)
+      //  version: "0.6.4",    // Fetch exact version from solc-bin (default: truffle's version)
       // version: "0.5.1",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
