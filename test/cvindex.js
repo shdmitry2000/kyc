@@ -14,27 +14,89 @@ contract('Regulator', function(accounts) {
     accounts=accounts;
     account=accounts[0];
     var Registry_instance;
-    it("should be empty at the beginning", function() {
+    it("regulator begin test", function() {
         return Regulator.deployed().then(function (instance) {
             Registry_instance = instance;
             // console.log("instance",instance);
             return Registry_instance.getCompaniesList.call();
         }).then(function (companies_list) {
             console.log("companies_list", companies_list);
-            assert.equal(companies_list.length, 1, "Registry wasn't empty!");
+            assert.equal(companies_list.length, 0, "Registry wasn't empty!");
+            return Registry_instance.submitCompany(account ,'bank hapoalim','hanegev 11 ,Tel aviv',1,{from: account});
+        }).then(function (result) {
+            var addedCompany=false;
+            for (var i = 0; i < result.logs.length; i++) {
+                var log = result.logs[i];
+
+                if (log.event == "AddCompany") {
+                    // We found the event!
+                    console.log("AddCompany:");
+                    console.log(log.args);
+                    addedCompany=true;
+                    break;
+                }
+            }
+            if(!addedCompany) assert.fail("can't add company");
+            // console.log(tx_id);
+                return Registry_instance.getCompaniesList.call();
+       }).then(function (companies_list) {
             Registry_instance.getCompany(companies_list[0])
-        }).then(function (company_data) {
-            console.log("company_data", company_data);
-        }).catch(function (error) {
+                    }).then(function (company_data) {
+                        console.log("test company_data", company_data);
+        }).catch(function(error) {
             console.error(error);
-            assert.equal(error.toString(), '',
+            assert.equal(error.toString(),'',
                 'Error detected')
         });
+
+
 
     });
 
 
+contract('bad company add test', function(accounts) {
 
+    console.log("accounts",accounts);
+    // console.log('kyc address',KYC.address);
+    accounts=accounts;
+    account=accounts[0];
+    var Registry_instance;
+    it("regulator begin test", function() {
+        return Regulator.deployed().then(function (instance) {
+            Registry_instance = instance;
+            // console.log("instance",instance);
+            return Registry_instance.getCompaniesList.call();
+        }).then(function (companies_list) {
+            console.log("companies_list", companies_list);
+            assert.equal(companies_list.length, 0, "Registry wasn't empty!");
+            return Registry_instance.submitCompany(account ,'Israel Discount Bank Ltd','P.O.B. 456, 27-31 Yehuda Halevy St ,Tel aviv , 61003',11,{from: account});
+        }).then(function (result) {
+            var addedCompany=false;
+            for (var i = 0; i < result.logs.length; i++) {
+                var log = result.logs[i];
+
+                if (log.event == "AddCompany") {
+                    // We found the event!
+                    console.log("AddCompany:");
+                    console.log(log.args);
+                    addedCompany=true;
+                    break;
+                }
+            }
+            if(!addedCompany) assert.fail("can't add company");
+            // console.log(tx_id);
+              return Registry_instance.getCompaniesList.call();
+       }).then(function (companies_list) {
+              return Registry_instance.getCompaniesList.call();
+        }).catch(function(error) {
+            console.error(error);
+            assert.equal(error.toString(),'',
+                'Error detected')
+        });
+
+        });
+
+    });
 
     it("should add customer at the beginning", function() {
         var Registry_instance;

@@ -80,7 +80,10 @@ let submitCompany = async (address,company_name,company_address,register_id) => 
         const accounts = await Web3.eth.getAccounts();
         const defacc=Web3.eth.defaultAccount;
         log.info('submitCompany')
-        log.info(defacc)
+        log.info(address)
+        log.info(company_name)
+        log.info(company_address)
+        log.info(register_id)
         const res = await regulatorInstance.methods.submitCompany(address,company_name,company_address,register_id).send({ from: accounts[0], gas: 4000000 });
         log.info(res)
 

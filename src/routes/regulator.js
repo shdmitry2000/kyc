@@ -161,7 +161,7 @@ router.get('/organizations', async (req, res, next) => {
 *                    type: string
 *                    description: company local address
 *                 register_id:
-*                    type: string
+*                    type: integer
 *                    description: company register id
 
 */
@@ -209,7 +209,7 @@ router.get('/organizations', async (req, res, next) => {
     *                type: string
     *                description: company presence address
     *              register_id:
-    *                type: string
+    *                type: integer
     *                description: company register id
 *     responses:
  *       201:
