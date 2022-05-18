@@ -222,6 +222,14 @@ let submitKYC = async (fullname,id,issued_country, laddress, sex,
         const accounts = await Web3.eth.getAccounts();
         const defacc=Web3.eth.defaultAccount;
         log.info('submitKYC')
+        log.info(issued_country)
+        log.info(laddress)
+        log.info(id)
+        log.info(fullname)
+        log.info(sex)
+        log.info(date_of_birth)
+        log.info(smoking)
+        log.info(company_registry_id)
 
         const res = await regulatorInstance.methods.performFullKYC(
         fullname,id,issued_country, laddress, sex,
