@@ -23,6 +23,7 @@ let getAccounts = async () => {
     try {
 
         const accounts = await Web3.eth.getAccounts();
+        log.info('accounts');
 //        console.log(accounts);
 
 //        const res = "shdhasdf dw"
@@ -73,6 +74,32 @@ let getCompaniesData = async (register_id) => {
     }
 };
 
+let getCompanyIdbyAddress = async (address) => {
+    try {
+
+        const accounts = await Web3.eth.getAccounts();
+//        const res = await regulatorInstance.methods.confirmPurchase()
+//            .send({
+//                from: accounts[1],
+//                value:3000000000000000000
+//            });
+        log.info("getCompanyIdbyAddress")
+//        const companyes = await regulatorInstance.methods.getCompaniesList.call();
+//        log.info(companyes)
+//        log.info(companyes[0])
+        const res = await regulatorInstance.methods.getCompanyIdbyAddress(address).call({  from: accounts[0]   });
+        log.info("after")
+        log.info(res)
+
+        return Promise.resolve(res);
+    } catch (err) {
+        log.error
+        return Promise.reject(err);
+    }
+};
+
+
+
 
 let submitCompany = async (address,company_name,company_address,register_id) => {
     try {
@@ -114,6 +141,27 @@ let submitCustomer = async (account_address,id) => {
         return Promise.reject(err);
     }
 };
+
+let connectCompanyAddress = async (account_address,id) => {
+    try {
+        const accounts = await Web3.eth.getAccounts();
+        log.info('submitCustomer')
+//        const res = await regulatorInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
+        const res = await regulatorInstance.methods.connectCompanyAddress(account_address ,id).send({ from: accounts[0], gas: 4000000 });
+//           const res = await testInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
+
+        log.info(res)
+
+
+        return Promise.resolve(res);
+    } catch (err) {
+        log.info('err');
+        log.info(err);
+        return Promise.reject(err);
+    }
+};
+
+
 
 let createConsentRequest = async (id,company_registry_id,kyc_issuer_registry_id) => {
     try {
@@ -492,6 +540,6 @@ export {
          getConsumer ,
          getConsentRequests,
          getCurrentKYCissuer,
-
-
+         getCompanyIdbyAddress,
+         connectCompanyAddress,
 };

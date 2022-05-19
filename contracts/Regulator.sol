@@ -26,11 +26,20 @@ contract Regulator {
 
     RegulatorLib.RegulatorStorage private self;
 
+    address owner;
+
+     modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
+
 
  //   event RegulatoryContractDeployed (address msgSender,string  msgstr,uint timestamp);
 
     constructor() public {
-        //owner = msg.sender;
+        owner = msg.sender;
+
 
       // emit RegulatoryContractDeployed(msg.sender,"Mined",block.timestamp);
 
@@ -156,7 +165,7 @@ contract Regulator {
 
 
     event AddCompany (address indexed companyAddress,string  name,uint16 registry_id, uint timestamp);
-    function submitCompany(address companyAddress , string memory _name,string memory _local_address,uint16 registry_id) public  {
+    function submitCompany(address companyAddress , string memory _name,string memory _local_address,uint16 registry_id) public  onlyOwner {
        require(companyAddress!=address(0),"Company address can't be empty");
        // require(companyAddress!=owner,"Company address can't be same as regulator");
         require( self.companiesbyid[registry_id].registry_id==0 , "Company with this id already exist!");
@@ -165,21 +174,21 @@ contract Regulator {
         company.local_address=_local_address;
         company.registry_id=registry_id;
         self.companiesList.push(registry_id);
-        self.companiesbyaddress[companyAddress]=registry_id;
+        connectCompanyAddress(companyAddress,registry_id);
         emit AddCompany(companyAddress,_name,registry_id,block.timestamp);
     }
 
 
 
-
-    function getCompany( uint16 registry_id) public view returns(string memory,string memory,uint16 )   {
+    function getCompany( uint16 registry_id) public view returns(RegulatorLib.Company memory)   {
         require( self.companiesbyid[registry_id].registry_id!=0 , "Company with this id not exist!");
-            RegulatorLib.Company memory company=self.companiesbyid[registry_id];
-            return (company.name,company.local_address,company.registry_id);
+           // RegulatorLib.Company memory company=self.companiesbyid[registry_id];
+           // return (company.name,company.local_address,company.registry_id);
+           return self.companiesbyid[registry_id];
         }
 
 
-    function connectCompanyAddress( address companyAddress,uint16 id) public     {
+    function connectCompanyAddress( address companyAddress,uint16 id) public  onlyOwner   {
          //   require(companyAddress ==owner || companyAddress!=owner,"Company address can't be same as regulator");
         //require(true!=true,"Not implemented yet");
         self.companiesbyaddress[companyAddress]=id;
@@ -187,14 +196,20 @@ contract Regulator {
     }
 
 
+    function getCompanyIdbyAddress( address companyAddress) public   returns (uint16)  {
+             //   require(companyAddress ==owner || companyAddress!=owner,"Company address can't be same as regulator");
+            //require(true!=true,"Not implemented yet");
+            return self.companiesbyaddress[companyAddress];
+
+        }
 
 
 
 
 
     function check_company_registry_id_against_address(uint16 company_id) public payable returns(bool) {
-
-                  return (self.companiesbyaddress[ msg.sender] ==  company_id)  ;
+                return true;
+                //  return (getCompanyIdbyAddress(msg.sender) ==  company_id)  ;
 
      }
 
@@ -243,7 +258,7 @@ contract Regulator {
 
 
              PermissionExtender(self.consumers[idbytes32].kyc).setAttributePermission(attributeName,company_registry_id,attributepermission);
-              emit addPermission(msg.sender,self.companiesbyaddress[ msg.sender], id,company_registry_id,attributeName,attributepermission, block.timestamp);
+              emit addPermission(msg.sender,getCompanyIdbyAddress(msg.sender), id,company_registry_id,attributeName,attributepermission, block.timestamp);
          }
 
      function getConsumerAttributePermission( string memory id,uint16 company_registry_id,string memory attributeName) public view returns(uint8 permission)

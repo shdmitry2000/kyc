@@ -16,6 +16,8 @@ import {
      getConsumer ,
      getConsentRequests,
      getCurrentKYCissuer,
+     getCompanyIdbyAddress,
+     connectCompanyAddress,
     } from '../service/regulator';
 import log from "../utils/logger";
 
@@ -79,6 +81,7 @@ const zero_address = "0x0000000000000000000000000000000000000000";
  */
 router.get('/accounts', async (req, res, next) => {
   try {
+   log.info('getAccounts');
     const data = await getAccounts();
 //    const str = JSON.stringify(data, null, 2);
     res.json({
@@ -174,15 +177,69 @@ router.get('/organizations', async (req, res, next) => {
 //    const str = JSON.stringify(data, null, 2);
     log.info(data)
     res.json({
-      company_name : data[0],
-      company_address:data[1],
-      register_id:data[2],
-    });
+           data
+        });
+//    res.json({
+//      company_name : data[0],
+//      company_address:data[1],
+//      register_id:data[2],
+//    });
   } catch (err) {
     res.status(500);
     next(err);
   }
 });
+
+/**
+* @openapi
+* /api/organizations/{address}/id:
+*  get:
+*    tags:
+*      - Company
+*    summary:  return a  company data for existing id.
+*    description: return a  company id  for existing address .
+*    parameters:
+*      - name: address
+*        in: path
+*        description: get the data of company
+*        required: true
+*        schema:
+*          type: string
+*    responses:
+*      200:
+*         description: Success
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 company_id:
+*                    type: string
+*                    description: company id
+*/
+    router.get('/organizations/:address/id', async (req, res, next) => {
+  try {
+    log.info("register_id")
+    let address = req.params.address;
+    log.info(address)
+    const data = await getCompanyIdbyAddress(address);
+//    const str = JSON.stringify(data, null, 2);
+    log.info(data)
+    res.json({
+           data
+        });
+//    res.json({
+//      company_name : data[0],
+//      company_address:data[1],
+//      register_id:data[2],
+//    });
+  } catch (err) {
+    res.status(500);
+    next(err);
+  }
+});
+
+
 
 /**
 * @openapi
@@ -297,7 +354,7 @@ router.post('/organizations/new', async (req, res, next) => {
 router.get('/customers/:id', async (req, res, next) => {
   try {
 //  const token = req.param('token');
-    log.info("submitcustomer begin")
+    log.info("getcustomer begin")
     let id = req.params.id;
     log.info(id)
 //    let account_address = req.body.account_address;
@@ -315,6 +372,7 @@ router.get('/customers/:id', async (req, res, next) => {
     next(err);
   }
 });
+
 
 /**
 * @openapi
@@ -352,7 +410,7 @@ router.get('/customers/:id', async (req, res, next) => {
 router.get('/customers/:id/kyc_issuer', async (req, res, next) => {
   try {
 //  const token = req.param('token');
-    log.info("submitcustomer begin")
+    log.info("getKYCcustomer begin")
     let id = req.params.id;
     log.info(id)
 //    let account_address = req.body.account_address;
@@ -429,6 +487,78 @@ router.post('/customers/new', async (req, res, next) => {
     next(err);
   }
 });
+
+
+
+/**
+* @openapi
+* /api/organizations/{register_id}/connectbyaddress:
+*  post:
+*     tags:
+*       - Company
+*     summary:  connect company address to id.
+*     description: connect company address to id.
+*     parameters:
+*      - name: register_id
+*        in: path
+*        description: company register id
+*        required: true
+*        schema:
+*          type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+    *              address:
+    *                type: string
+    *                description: the address   of company on chain
+*     responses:
+ *       201:
+ *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: The user ID.
+ *                       example: 0
+ *                     name:
+ *                       type: string
+ *                       description: The user's name.
+ *                       example: Leanne Graham
+*/
+
+
+router.post('/organizations/:register_id/connectbyaddress', async (req, res, next) => {
+  try {
+//  const token = req.param('token');
+    log.info("connectCompanyAddress begin")
+    let company_registry_id=req.params.register_id;
+    let account_address=req.body.address;
+//    let account_address = req.body.account_address;
+    log.info(id)
+    log.info(account_address)
+    const data = await connectCompanyAddress(account_address,company_registry_id);
+
+    res.json({
+          success: true,
+          message: 'submit customers is confirmed' ,
+          data
+        });
+  } catch (err) {
+    res.status(500);
+    next(err);
+  }
+});
+
 
 
 /**
