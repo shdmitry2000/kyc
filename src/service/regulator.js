@@ -12,10 +12,11 @@ import  NetworkNum  from '../const';
 
 const RegulatorContract = contract(RegulatorFunk);
 const KycContract = contract(KYCFunk);
-//const OwnersContract = contract(OwnersFunk);
 
-let regulatorInstance = new Web3.eth.Contract(RegulatorContract.abi, RegulatorContract.networks[NetworkNum].address)
-let kycInstance = new Web3.eth.Contract(KycContract.abi, KycContract.networks[NetworkNum].address)
+//Web3.eth.handleRevert = true;
+let regulatorInstance = new Web3.eth.Contract(RegulatorContract.abi, RegulatorContract.networks[NetworkNum].address);
+let kycInstance = new Web3.eth.Contract(KycContract.abi, KycContract.networks[NetworkNum].address);
+//regulatorInstance.handleRevert = true
 //let ownersInstance = new Web3.eth.Contract(OwnersContract.abi, OwnersContract.networks[3].address)
 
 
@@ -128,6 +129,7 @@ let submitCustomer = async (account_address,id) => {
         const accounts = await Web3.eth.getAccounts();
         log.info('submitCustomer')
 //        const res = await regulatorInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
+//        regulatorInstance.handleRevert = true
         const res = await regulatorInstance.methods.submitConsumer(account_address ,id).send({ from: accounts[0], gas: 4000000 });
 //           const res = await testInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
 
@@ -136,7 +138,7 @@ let submitCustomer = async (account_address,id) => {
 
         return Promise.resolve(res);
     } catch (err) {
-        log.info('err');
+        log.info('err:');
         log.info(err);
         return Promise.reject(err);
     }
@@ -221,7 +223,8 @@ let getConsentRequestsbyCompany = async (id,company_registry_id) => {
     }
 };
 */
-let getConsentRequests = async () => {
+
+let getConsentRequests = async (user_id,issuer_register_id,requester_register_id) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         log.info('getConsentRequests')
@@ -234,6 +237,22 @@ let getConsentRequests = async () => {
         for (let i = 0; i < res.length; i++) {
           requests[i] = { company_id: res[i][0], id: Web3.utils.hexToUtf8(res[i][1]),kyc_manager_id: res[i][2],performed: res[i][3] ,perform_stamp :res[i][4]};
         }
+
+        var filter = {
+                    id: user_id,
+                    kyc_manager_id: issuer_register_id,
+                    company_id: requester_register_id
+        };
+        log.info('filter')
+        log.info(filter)
+        requests=requests.filter(function(item) {
+            for (var key in filter) {
+             if ((item[key] === undefined || item[key] != filter[key]) && (filter[key] !== undefined))
+                return false;
+            }
+            return true;
+          });
+
         log.info(requests)
 
 
@@ -376,10 +395,57 @@ let getConsumerAttributeName = async (id,company_registry_id, attributeRow) => {
          const res = await regulatorInstance.methods.getConsumerAttributeName( id, attributeRow).call({ from: accounts[0], gas: 4000000 });
 
 
-//        const res = await regulatorInstance.methods.getConsumerAttributePermission( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
         log.info(res)
 
         return Promise.resolve(Web3.utils.hexToUtf8(res));
+    } catch (err) {
+        log.info('err');
+        log.info(err);
+        return Promise.reject(err);
+    }
+};
+
+let getConsumerPermissionList = async (id,company_registry_id) => {
+    try {
+        const accounts = await Web3.eth.getAccounts();
+
+        log.info('getConsumerPermissionList')
+//        log.info(id)
+//        log.info(company_registry_id)
+//        log.info(attributeName)
+         const res = await regulatorInstance.methods.getConsumerAttributeList( id,company_registry_id).call({ from: accounts[0], gas: 4000000 });
+         let permission_list = [];
+         for (let i = 0; i < res.length; i++) {
+                   let attributeName=Web3.utils.hexToUtf8(res[i])
+                   log.info('att name');
+                   log.info(attributeName);
+                   const permission=await getConsumerAttributePermission(id,company_registry_id, attributeName);
+                   log.info('permission');
+                   log.info(permission);
+
+                   var item = {}
+                   item ["attribut"] = attributeName;
+                   item ["permission"] = permission;
+
+                     permission_list.push(item);
+                }
+                log.info(permission_list)
+     /*
+         let permission_list = [];
+
+         for (let i = 0; i < res.length; i++) {
+            let attributeName=Web3.utils.hexToUtf8(res[i])
+            log.info('att name');
+            log.info(attributeName);
+            const permission=await getConsumerAttributePermission(id,company_registry_id, attributeName);
+            log.info('permission');
+            log.info(permission);
+            permission_list[i] =  { [attributeName] : permission };
+         }
+         log.info(permission_list)
+*/
+
+        return Promise.resolve(permission_list);
     } catch (err) {
         log.info('err');
         log.info(err);
@@ -392,17 +458,18 @@ let getConsumerAttributeList = async (id,company_registry_id) => {
     try {
         const accounts = await Web3.eth.getAccounts();
 
-        log.info('getConsumerAttributePermission')
+        log.info('getConsumerAttributeList')
 //        log.info(id)
 //        log.info(company_registry_id)
 //        log.info(attributeName)
          const res = await regulatorInstance.methods.getConsumerAttributeList( id,company_registry_id).call({ from: accounts[0], gas: 4000000 });
+         log.info(res);
          let requests = [];
 
          for (let i = 0; i < res.length; i++) {
            requests[i] =   Web3.utils.hexToUtf8(res[i]);
          }
-         log.info(requests)
+         log.info(requests);
 
 
 //        const res = await regulatorInstance.methods.getConsumerAttributePermission( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
@@ -421,11 +488,11 @@ let setConsumerAttributePermission = async (id,company_registry_id, attributeNam
         const accounts = await Web3.eth.getAccounts();
         const defacc=Web3.eth.defaultAccount;
         log.info('setConsumerAttributePermission')
-        log.info(attributeName)
-        log.info(attributepermission)
+        log.info(attributeName);
+        log.info(attributepermission);
         const res = await regulatorInstance.methods.addCompanionPermission(id , company_registry_id, attributeName,   attributepermission)
         .send({ from: accounts[0], gas: 4000000 });
-        log.info(res)
+        log.info(res);
 
         return Promise.resolve(res);
     } catch (err) {
@@ -542,4 +609,5 @@ export {
          getCurrentKYCissuer,
          getCompanyIdbyAddress,
          connectCompanyAddress,
+         getConsumerPermissionList,
 };

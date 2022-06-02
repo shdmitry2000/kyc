@@ -18,6 +18,7 @@ import {
      getCurrentKYCissuer,
      getCompanyIdbyAddress,
      connectCompanyAddress,
+     getConsumerPermissionList,
     } from '../service/regulator';
 import log from "../utils/logger";
 
@@ -176,14 +177,14 @@ router.get('/organizations', async (req, res, next) => {
     const data = await getCompaniesData(register_id);
 //    const str = JSON.stringify(data, null, 2);
     log.info(data)
-    res.json({
-           data
-        });
 //    res.json({
-//      company_name : data[0],
-//      company_address:data[1],
-//      register_id:data[2],
-//    });
+//           data
+//        });
+    res.json({
+      company_name : data[0],
+      company_address:data[1],
+      register_id:data[2],
+    });
   } catch (err) {
     res.status(500);
     next(err);
@@ -813,6 +814,22 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 *      - Company
 *    summary:  list of  request consents  .include preformed flag and performance date.
 *    description: list of  request consents  .include preformed flag and performance date.
+*    parameters:
+*     - name: user_id
+*       in: query
+*       description: user id
+*       schema:
+*         type: integer
+*     - name: issuer_register_id
+*       in: query
+*       description: issuer register id
+*       schema:
+*         type: integer
+*     - name:  requester_register_id
+*       in: query
+*       description: requester register id
+*       schema:
+*         type: integer
 *    responses:
 *      200:
 *         description: Success
@@ -830,9 +847,15 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 */
    router.get('/customers/consentrequest/list', async (req, res, next) => {
   try {
-    log.info("register_id")
+    log.info("consentrequest")
+    if (req.query.user_id !== undefined)   var user_id = req.query.user_id;
+            else var user_id;
+    if (req.query.issuer_register_id !== undefined)   var issuer_register_id = req.query.issuer_register_id;
+          else var issuer_register_id;
+    if (req.query.requester_register_id !== undefined)   var requester_register_id = req.query.requester_register_id;
+          else var requester_register_id;
 //    log.info(attributeName)
-    const data = await getConsentRequests();
+    const data = await getConsentRequests(user_id,issuer_register_id,requester_register_id);
 //    const str = JSON.stringify(data, null, 2);
     log.info(data)
     res.json({
@@ -1088,6 +1111,61 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
   }
 });
 
+
+/**
+* @openapi
+* /api/organizations/{register_id}/customers/{id}/attribute/permissionlist:
+*  get:
+*    tags:
+*      - Company
+*    summary:  get all attributes  for company and customer id.  .
+*    description:  get all attributes  for company and customer id.  .
+*    parameters:
+*      - name: id
+*        in: path
+*        description: customer id
+*        required: true
+*        schema:
+*          type: string
+*      - name: register_id
+*        in: path
+*        description: company register id
+*        required: true
+*        schema:
+*          type: string
+*    responses:
+*      200:
+*         description: Success
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 company_name:
+*                    type: string
+*                    description: company name
+*                 company_address:
+*                    type: string
+*                    description: company local address
+*/
+   router.get('/organizations/:register_id/customers/:id/attribute/permissionlist', async (req, res, next) => {
+  try {
+  log.info("get all list of attributes")
+    log.info("register_id")
+    let register_id = req.params.register_id;
+    let id = req.params.id;
+    log.info(register_id)
+    const data = await getConsumerPermissionList(id,register_id);
+//    const str = JSON.stringify(data, null, 2);
+    log.info(data)
+    res.json({
+       data,
+    });
+  } catch (err) {
+    res.status(500);
+    next(err);
+  }
+});
 
 
 /**
