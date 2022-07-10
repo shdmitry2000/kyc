@@ -9,7 +9,7 @@ import {
      setConsumerAttributePermission ,
      getConsumerAttributePermission,
      getConsumerAttributeValue,
-     getConsumerOracleAttributeValue,
+ //    getConsumerOracleAttributeValue,
      getConsumerAttributeName,
      getConsumerAttributeList,
      createConsentRequest,
@@ -1004,66 +1004,6 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
   }
 });
 
-/**
-* @openapi
-* /api/organizations/{register_id}/customers/{id}/oracle/{attribut}/value:
-*  get:
-*    tags:
-*      - Company
-*    summary:  get attribute value for company by attribute name.performs  on company id+ customer id  .
-*    description: get attribute value for company by attribute name.performs  on company id+ customer id .
-*    parameters:
-*      - name: register_id
-*        in: path
-*        description: company register id
-*        required: true
-*        schema:
-*          type: string
-*      - name: id
-*        in: path
-*        description: customer id
-*        required: true
-*        schema:
-*          type: string
-*      - name: attribut
-*        in: path
-*        description: attribut name
-*        required: true
-*        schema:
-*          type: string
-*    responses:
-*      200:
-*         description: Success
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 company_name:
-*                    type: string
-*                    description: company name
-*                 company_address:
-*                    type: string
-*                    description: company local address
-*/
-   router.get('/organizations/:register_id/customers/:id/oracle/:attributeName/value', async (req, res, next) => {
-  try {
-    log.info("register_id")
-    let register_id = req.params.register_id;
-    let id = req.params.id;
-    let attributeName = req.params.attributeName;
-    log.info(register_id)
-    const data = await  getConsumerOracleAttributeValue(id,register_id, attributeName);  //getConsumerOracleAttributeValue
-//    const str = JSON.stringify(data, null, 2);
-    log.info(data)
-    res.json({
-       data,
-    });
-  } catch (err) {
-    res.status(500);
-    next(err);
-  }
-});
 
 
 /**
