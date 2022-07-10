@@ -12,42 +12,42 @@ library RegulatorLib {
 
 
 
-             function check_company_registry_id_against_address(uint16 company_id) private view  returns(bool) {
+             function check_company_registry_id_against_address(uint64 company_id) private view  returns(bool) {
                                return true;
                                //  return (getCompanyIdbyAddress(msg.sender) ==  company_id)  ;
 
                     }
 
 
-               function getCompaniesList(address _RegulatorStorageContract) public view returns( uint16 [] memory)
+               function getCompaniesList(address _RegulatorStorageContract) public view returns( uint64 [] memory)
                    {
                         return RegulatorStorage(_RegulatorStorageContract).getCompaniesList();
                    }
 
-          event AddCompany (address indexed companyAdminAddress,string  name,uint16 registry_id, uint timestamp);
-           function submitCompany(address _RegulatorStorageContract,address companyAddress , string memory _name,string memory _local_address,uint16 registry_id) public   {
+          event AddCompany (address indexed companyAdminAddress,string  name,uint64 registry_id, uint timestamp);
+           function submitCompany(address _RegulatorStorageContract,address companyAddress , string memory _name,string memory _local_address,uint64 registry_id) public   {
                 RegulatorStorage(_RegulatorStorageContract).submitCompany(companyAddress,_name, _local_address, registry_id);
                 emit AddCompany(companyAddress,_name,registry_id,block.timestamp);
            }
 
-       function getCompany( address _RegulatorStorageContract,uint16 registry_id) public view returns(RegulatorStorage.Company memory)   {
+       function getCompany( address _RegulatorStorageContract,uint64 registry_id) public view returns(RegulatorStorage.Company memory)   {
             return RegulatorStorage(_RegulatorStorageContract).getCompany(registry_id);
 
         }
 
-           function connectCompanyAddress(address _RegulatorStorageContract, address companyAddress,uint16 id) public     {
+           function connectCompanyAddress(address _RegulatorStorageContract, address companyAddress,uint64 id) public     {
                 RegulatorStorage(_RegulatorStorageContract).connectCompanyAddress(companyAddress, id);
            }
 
-               event finalizeKYC(string    id,address KYCAddress,uint16 company_registry_id ,uint timestamp);
+               event finalizeKYC(string    id,address KYCAddress,uint64 company_registry_id ,uint timestamp);
 
 
 
-        event submitConsentRequest (string  id,uint16  company_id,uint timestamp)  ;
-        event performedConsentRequest (string  id,uint16  company_id,uint16 kyc_manager_id,bool finished,uint timestamp)  ;
+        event submitConsentRequest (string  id,uint64  company_id,uint timestamp)  ;
+        event performedConsentRequest (string  id,uint64  company_id,uint64 kyc_manager_id,bool finished,uint timestamp)  ;
 
 
-        function performFullKYC(address _RegulatorStorageContract, string memory id,uint16 company_registry_id, address  kycadrr) public
+        function performFullKYC(address _RegulatorStorageContract, string memory id,uint64 company_registry_id, address  kycadrr) public
         {
 
           //  require(check_company_registry_id_against_address(company_registry_id),"this company not allowed to make setting!Wrong address!");
@@ -61,8 +61,8 @@ library RegulatorLib {
           }
 
 
-        event addPermission(address indexed performerAddress,uint16 issuer_id,string  id , uint16 company_registry_id,string  attributeName,uint8   attributepermission ,uint timestamp);
-         function addCompanionPermission(address _RegulatorStorageContract, string memory id , uint16 company_registry_id,string memory attributeName,uint8   attributepermission) public   {
+        event addPermission(address indexed performerAddress,uint64 issuer_id,string  id , uint64 company_registry_id,string  attributeName,uint8   attributepermission ,uint timestamp);
+         function addCompanionPermission(address _RegulatorStorageContract, string memory id , uint64 company_registry_id,string memory attributeName,uint8   attributepermission) public   {
                  RegulatorStorage.Consumer memory consumer=getConsumer( _RegulatorStorageContract, id);
                   //bytes32 idbytes32=id.stringToBytes32();
                  require(check_customer_kyc(_RegulatorStorageContract,consumer),"KYC not exist for cusstomer");
@@ -73,7 +73,7 @@ library RegulatorLib {
                    emit addPermission(msg.sender,getCompanyIdbyAddress(_RegulatorStorageContract,msg.sender), id,company_registry_id,attributeName,attributepermission, block.timestamp);
               }
 
-      function getCompanyIdbyAddress( address _RegulatorStorageContract,address companyAddress) public   returns (uint16)  {
+      function getCompanyIdbyAddress( address _RegulatorStorageContract,address companyAddress) public   returns (uint64)  {
                          return RegulatorStorage(_RegulatorStorageContract).getCompanyIdbyAddress(companyAddress);
 
                 }
@@ -140,7 +140,7 @@ library RegulatorLib {
 
 
 
-         function getConsumerAttributeList( address _RegulatorStorageContract,string memory id,uint16 company_registry_id) public view returns(bytes32[] memory)
+         function getConsumerAttributeList( address _RegulatorStorageContract,string memory id,uint64 company_registry_id) public view returns(bytes32[] memory)
           {
                RegulatorStorage.Consumer memory consumer=getConsumer( _RegulatorStorageContract, id);
                require(check_customer_kyc(_RegulatorStorageContract,consumer),"KYC not exist for cusstomer");
@@ -153,7 +153,7 @@ library RegulatorLib {
 
 
 
-          function getConsumerAttributePermission( address _RegulatorStorageContract,string memory id,uint16 company_registry_id,string memory attributeName) public view returns(uint8 permission)
+          function getConsumerAttributePermission( address _RegulatorStorageContract,string memory id,uint64 company_registry_id,string memory attributeName) public view returns(uint8 permission)
               {
                  RegulatorStorage.Consumer memory consumer=getConsumer( _RegulatorStorageContract, id);
                  require(check_customer_kyc(_RegulatorStorageContract,consumer),"KYC not exist for cusstomer");
@@ -162,7 +162,7 @@ library RegulatorLib {
 
               }
 
-              function getConsumerAttributeValue(address _RegulatorStorageContract,string memory id,uint16 company_registry_id,string memory attributeName) public view returns(bytes32 )
+              function getConsumerAttributeValue(address _RegulatorStorageContract,string memory id,uint64 company_registry_id,string memory attributeName) public view returns(bytes32 )
               {
                  RegulatorStorage.Consumer memory consumer=getConsumer( _RegulatorStorageContract, id);
                  require(check_customer_kyc(_RegulatorStorageContract,consumer),"KYC not exist for cusstomer");
@@ -196,7 +196,7 @@ library RegulatorLib {
 
 
 
-         function getCurrentKYCPIssuer(address _RegulatorStorageContract,string memory id) public view returns(uint16 )
+         function getCurrentKYCPIssuer(address _RegulatorStorageContract,string memory id) public view returns(uint64 )
          {
              RegulatorStorage.Consumer memory consumer=getConsumer( _RegulatorStorageContract, id);
              require(check_customer_kyc(_RegulatorStorageContract,consumer),"KYC not exist for cusstomer");
@@ -207,7 +207,7 @@ library RegulatorLib {
 
 
 
-        function createConsentRequest(address _RegulatorStorageContract,string memory id,uint16 company_id,uint16 kyc_manager_id) public   {
+        function createConsentRequest(address _RegulatorStorageContract,string memory id,uint64 company_id,uint64 kyc_manager_id) public   {
              RegulatorStorage.Consumer memory consumer=getConsumer( _RegulatorStorageContract, id);
              require(check_customer_kyc(_RegulatorStorageContract,consumer),"KYC not exist for cusstomer");
 
@@ -217,7 +217,7 @@ library RegulatorLib {
          }
 
 
-         function finishConsentRequest(address _RegulatorStorageContract,string memory id,uint16 company_id,uint16 kyc_manager_id,bool finished) public   {
+         function finishConsentRequest(address _RegulatorStorageContract,string memory id,uint64 company_id,uint64 kyc_manager_id,bool finished) public   {
 
              RegulatorStorage(_RegulatorStorageContract).finishConsentRequest(id.stringToBytes32(), company_id, kyc_manager_id, finished);
              emit performedConsentRequest(id,  company_id, kyc_manager_id, finished,block.timestamp);

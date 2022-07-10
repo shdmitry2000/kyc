@@ -49,7 +49,7 @@ contract Regulator is Ownable {
           }
 
 
-    function performFullKYC( string memory id,uint16 company_registry_id, string[] memory   attributesList, string[] memory   attributesVal) public
+    function performFullKYC( string memory id,uint64 company_registry_id, string[] memory   attributesList, string[] memory   attributesVal) public
         {
 
             address kycaddr=KYCFactory.createKyc(id,  company_registry_id,    attributesList,    attributesVal);
@@ -61,7 +61,7 @@ contract Regulator is Ownable {
 
 
 
-    function isConsentRequestAllowed(string memory id,uint16 company_id,uint16 kyc_manager_id) internal view returns (bool) {
+    function isConsentRequestAllowed(string memory id,uint64 company_id,uint64 kyc_manager_id) internal view returns (bool) {
         RegulatorStorage.Consumer  memory consumer =   getConsumer(id) ;
          require(consumer.registered , "Customer still not  exist !");
          require( consumer.verified , "Customer still not  verified!");
@@ -110,7 +110,7 @@ contract Regulator is Ownable {
 
 
 
-    function submitCompany(address companyAddress , string memory _name,string memory _local_address,uint16 registry_id) public  onlyOwner {
+    function submitCompany(address companyAddress , string memory _name,string memory _local_address,uint64 registry_id) public  onlyOwner {
 
 
         _RegulatorStorage.submitCompany( companyAddress ,   _name,  _local_address, registry_id) ;
@@ -119,53 +119,53 @@ contract Regulator is Ownable {
     }
 
 
-    function getCompany( uint16 registry_id) public view returns(RegulatorStorage.Company memory)   {
+    function getCompany( uint64 registry_id) public view returns(RegulatorStorage.Company memory)   {
         return _RegulatorStorage.getCompany(  registry_id) ;
 
        }
-    function connectCompanyAddress( address companyAddress,uint16 id) public  onlyOwner   {
+    function connectCompanyAddress( address companyAddress,uint64 id) public  onlyOwner   {
          return _RegulatorStorage.connectCompanyAddress(  companyAddress,id) ;
 
     }
 
 
-    function getCompanyIdbyAddress( address companyAddress) public   returns (uint16)  {
+    function getCompanyIdbyAddress( address companyAddress) public   returns (uint64)  {
              return _RegulatorStorage.getCompanyIdbyAddress(  companyAddress) ;
 
         }
 
 
-    function getConsumerAttributeList( string memory id,uint16 company_registry_id) public view returns(bytes32[] memory)
+    function getConsumerAttributeList( string memory id,uint64 company_registry_id) public view returns(bytes32[] memory)
      {
            return  _RegulatorStorage.getConsumerAttributeList(   id, company_registry_id);
 
      }
 
 
-   function createConsentRequest(string memory id,uint16 company_id,uint16 kyc_manager_id) public   {
+   function createConsentRequest(string memory id,uint64 company_id,uint64 kyc_manager_id) public   {
         return _RegulatorStorage.createConsentRequest(  id, company_id, kyc_manager_id);
    }
 
 
 
-    function finishConsentRequest(string memory id,uint16 company_id,uint16 kyc_manager_id,bool finished) public   {
+    function finishConsentRequest(string memory id,uint64 company_id,uint64 kyc_manager_id,bool finished) public   {
 
             return _RegulatorStorage.finishConsentRequest(  id, company_id, kyc_manager_id, finished);
 
       }
 
 
-    function addCompanionPermission(string memory id , uint16 company_registry_id,string memory attributeName,uint8   attributepermission) public   {
+    function addCompanionPermission(string memory id , uint64 company_registry_id,string memory attributeName,uint8   attributepermission) public   {
 
              _RegulatorStorage.addCompanionPermission(  id ,  company_registry_id,  attributeName,   attributepermission);
         }
 
-     function getConsumerAttributePermission( string memory id,uint16 company_registry_id,string memory attributeName) public view returns(uint8 permission)
+     function getConsumerAttributePermission( string memory id,uint64 company_registry_id,string memory attributeName) public view returns(uint8 permission)
          {
             return _RegulatorStorage.getConsumerAttributePermission(   id, company_registry_id,  attributeName) ;
          }
 
-         function getConsumerAttributeValue(string memory id,uint16 company_registry_id,string memory attributeName) public view returns(bytes32 )
+         function getConsumerAttributeValue(string memory id,uint64 company_registry_id,string memory attributeName) public view returns(bytes32 )
          {
             return _RegulatorStorage.getConsumerAttributeValue(  id, company_registry_id,  attributeName) ;
 
@@ -189,7 +189,7 @@ contract Regulator is Ownable {
 
 
 
-    function getCurrentKYCPIssuer(string memory id) public view returns(uint16 )
+    function getCurrentKYCPIssuer(string memory id) public view returns(uint64 )
     {
 
 
@@ -200,7 +200,7 @@ contract Regulator is Ownable {
 
 
 
-    function getCompaniesList() public view returns(  uint16 [] memory)
+    function getCompaniesList() public view returns(  uint64 [] memory)
     {
        return _RegulatorStorage.getCompaniesList() ;
     }

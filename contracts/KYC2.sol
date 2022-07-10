@@ -13,7 +13,7 @@ contract KYC2 is KYCInt,Ownable {
 
 
 
-      constructor(address _KYCStorageContract ,string memory id, uint16 _kycPerformer,string[] memory   attributesList, string[] memory attributesVal)   public
+      constructor(address _KYCStorageContract ,string memory id, uint64 _kycPerformer,string[] memory   attributesList, string[] memory attributesVal)   public
       {
 
           require(attributesList.length==attributesVal.length , "Customer still not  exist !");
@@ -37,7 +37,7 @@ contract KYC2 is KYCInt,Ownable {
 
 
 
-      function getKYCIssuer()  view   external  returns (uint16)
+      function getKYCIssuer()  view   external  returns (uint64)
       {
           return KYCexternalStorage.getKYCIssuer();
       }
@@ -57,7 +57,7 @@ contract KYC2 is KYCInt,Ownable {
          return KYCexternalStorage.getAttributeList();
       }
 
-      function setAttributePermission(string memory  attributeName ,uint16 companion_id , uint8 permission)  external  onlyOwner
+      function setAttributePermission(string memory  attributeName ,uint64 companion_id , uint8 permission)  external  onlyOwner
       {
 
           return KYCexternalStorage.setAttributePermission(attributeName , companion_id ,  permission);
@@ -66,7 +66,7 @@ contract KYC2 is KYCInt,Ownable {
 
 
 
-      function isAttributePermited(string memory  attributeName,uint16 companion_id) view public  returns (uint8)
+      function isAttributePermited(string memory  attributeName,uint64 companion_id) view public  returns (uint8)
       {
               return KYCexternalStorage.isAttributePermited(attributeName , companion_id );
 
@@ -74,13 +74,13 @@ contract KYC2 is KYCInt,Ownable {
 
 
 
-      function getAttribute(string memory attributeName,uint16 companion_id) view public  returns (bytes32 )
+      function getAttribute(string memory attributeName,uint64 companion_id) view public  returns (bytes32 )
       {
 
           return KYCexternalStorage.getAttribute(attributeName , companion_id );
       }
   /*
-      function getAttributeValue(string memory attributeName,uint16 companion_id) view public  returns (bytes32)
+      function getAttributeValue(string memory attributeName,uint64 companion_id) view public  returns (bytes32)
           {
 
               KYCexternalStorage.getAttributeValue(attributeName,companion_id);

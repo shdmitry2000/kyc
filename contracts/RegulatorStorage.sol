@@ -8,7 +8,7 @@ contract RegulatorStorage is   Ownable {
             struct Company {
                             string name;
                             string local_address;
-                            uint16 registry_id;
+                                uint64 registry_id;
             }
 
 
@@ -19,14 +19,14 @@ contract RegulatorStorage is   Ownable {
                             address kyc;
                             bool require_update;
                             bool update_in_progress;
-                            //mapping(uint16 => address)  permissions;
+                            //mapping(uint64 => address)  permissions;
                             //mapping(address => mapping(address => bool) )  requests;
 
                         }
         struct ConsentRequest {
-                        uint16 company_id;
+                        uint64 company_id;
                         bytes32 id;
-                        uint16 kyc_manager_id;
+                        uint64 kyc_manager_id;
                         bool performed;
                         uint perform_stamp;
                     }
@@ -37,9 +37,9 @@ contract RegulatorStorage is   Ownable {
 
 
 
-                mapping (uint16=>Company)  companiesbyid ;
-                mapping (address=>uint16)  companiesbyaddress;
-                uint16  []   companiesList;
+                mapping (uint64=>Company)  companiesbyid ;
+                mapping (address=>uint64)  companiesbyaddress;
+                uint64  []   companiesList;
 
 
                 mapping (bytes32=>Consumer)  consumers;
@@ -56,7 +56,7 @@ contract RegulatorStorage is   Ownable {
 
 
 
-     function submitCompany(address companyAddress , string memory _name,string memory _local_address,uint16 registry_id) public  onlyOwner {
+     function submitCompany(address companyAddress , string memory _name,string memory _local_address,uint64 registry_id) public  onlyOwner {
        require(companyAddress!=address(0),"Company address can't be empty");
         require( companiesbyid[registry_id].registry_id==0 , "Company with this id already exist!");
         RegulatorStorage.Company storage company=companiesbyid[registry_id];
@@ -68,19 +68,19 @@ contract RegulatorStorage is   Ownable {
      }
 
 
-    function getCompany( uint16 registry_id) public view returns(RegulatorStorage.Company memory) {
+    function getCompany( uint64 registry_id) public view returns(RegulatorStorage.Company memory) {
         require( companiesbyid[registry_id].registry_id!=0 , "Company with this id not exist!");
             return companiesbyid[registry_id];
         }
 
 
-    function connectCompanyAddress( address companyAddress,uint16 id) public  onlyOwner   {
+    function connectCompanyAddress( address companyAddress,uint64 id) public  onlyOwner   {
         companiesbyaddress[companyAddress]=id;
 
     }
 
 
-    function getCompanyIdbyAddress( address companyAddress) public   returns (uint16)  {
+    function getCompanyIdbyAddress( address companyAddress) public   returns (uint64)  {
              //   require(companyAddress ==owner || companyAddress!=owner,"Company address can't be same as regulator");
             //require(true!=true,"Not implemented yet");
             return companiesbyaddress[companyAddress];
@@ -101,7 +101,7 @@ contract RegulatorStorage is   Ownable {
 
 
 
-        function getCompaniesList() public view returns( uint16 [] memory)
+        function getCompaniesList() public view returns( uint64 [] memory)
         {
             return companiesList;
         }
@@ -109,7 +109,7 @@ contract RegulatorStorage is   Ownable {
 
 
 
-    function createConsentRequest(bytes32 idbytes32,uint16 company_id,uint16 kyc_manager_id) public  onlyOwner {
+    function createConsentRequest(bytes32 idbytes32,uint64 company_id,uint64 kyc_manager_id) public  onlyOwner {
 
             for (uint256 i = 0; i < consentRequests.length; i++) {
 
@@ -122,7 +122,7 @@ contract RegulatorStorage is   Ownable {
 
         }
 
-    function finishConsentRequest(bytes32 idbytes32,uint16 company_id,uint16 kyc_manager_id,bool finished) public onlyOwner  {
+    function finishConsentRequest(bytes32 idbytes32,uint64 company_id,uint64 kyc_manager_id,bool finished) public onlyOwner  {
              bool finish=false;
              for (uint256 i = 0; i < consentRequests.length; i++) {
                   if (consentRequests[i].company_id==company_id && consentRequests[i].id==idbytes32

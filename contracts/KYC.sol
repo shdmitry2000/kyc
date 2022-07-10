@@ -19,7 +19,7 @@ contract KYC is KYCInt,Ownable {
 
 /*
     constructor(address _KYCStorageContract,
-    uint16 _kycPerformer,string memory fullname,string memory id,string memory issued_country,
+    uint64 _kycPerformer,string memory fullname,string memory id,string memory issued_country,
                    string memory laddress, string memory sex, string memory date_of_birth,  bool  isSmoking)   public    {
 
             if (_KYCStorageContract!=address(0))
@@ -34,7 +34,7 @@ contract KYC is KYCInt,Ownable {
 
 */
 
-constructor(address _KYCStorageContract ,string memory id, uint16 _kycPerformer,string[] memory   attributesList, string[] memory attributesVal)   public
+constructor(address _KYCStorageContract ,string memory id, uint64 _kycPerformer,string[] memory   attributesList, string[] memory attributesVal)   public
 {
 
     require(attributesList.length==attributesVal.length , "Customer still not  exist !");
@@ -60,7 +60,7 @@ constructor(address _KYCStorageContract ,string memory id, uint16 _kycPerformer,
 
 
 /*
-    constructor(address _operatorContract,uint16 _kycPerformer,string memory fullname,string memory id,string memory issued_country,
+    constructor(address _operatorContract,uint64 _kycPerformer,string memory fullname,string memory id,string memory issued_country,
                 string memory laddress, string memory sex, string memory date_of_birth,  bool  isSmoking) public {
                operatorContract=_operatorContract;
         operatorContract=_operatorContract;
@@ -72,13 +72,13 @@ constructor(address _KYCStorageContract ,string memory id, uint16 _kycPerformer,
 
 
 /*
-    function getAttributeValue(string memory attrName,uint16 companion_id)  view public     returns (bytes32)
+    function getAttributeValue(string memory attrName,uint64 companion_id)  view public     returns (bytes32)
     {
         KYCexternalStorage.getAttributeValue(attrName,companion_id);
     }
 */
 
-    function getKYCIssuer()   view  external returns (uint16)
+    function getKYCIssuer()   view  external returns (uint64)
     {
         return KYCexternalStorage.getKYCIssuer();
     }
@@ -98,7 +98,7 @@ constructor(address _KYCStorageContract ,string memory id, uint16 _kycPerformer,
        return KYCexternalStorage.getAttributeList();
     }
 
-    function setAttributePermission(string memory  attributeName ,uint16 companion_id , uint8 permission)  external  onlyOwner
+    function setAttributePermission(string memory  attributeName ,uint64 companion_id , uint8 permission)  external  onlyOwner
     {
 
         return KYCexternalStorage.setAttributePermission(attributeName , companion_id ,  permission);
@@ -107,7 +107,7 @@ constructor(address _KYCStorageContract ,string memory id, uint16 _kycPerformer,
 
 
 
-    function isAttributePermited(string memory  attributeName,uint16 companion_id) view public   returns (uint8)
+    function isAttributePermited(string memory  attributeName,uint64 companion_id) view public   returns (uint8)
     {
             return KYCexternalStorage.isAttributePermited(attributeName , companion_id );
 
@@ -115,7 +115,7 @@ constructor(address _KYCStorageContract ,string memory id, uint16 _kycPerformer,
 
 
 
-    function getAttribute(string memory attributeName,uint16 companion_id) view  external returns (bytes32 )
+    function getAttribute(string memory attributeName,uint64 companion_id) view  external returns (bytes32 )
     {
 
         return KYCexternalStorage.getAttribute(attributeName , companion_id );

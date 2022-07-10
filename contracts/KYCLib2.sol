@@ -7,7 +7,7 @@ library KYCLib2 {
         using StringLibrary for string;
 
 
-        function init(address _KYCStorage  ,string memory id, uint16 _kycIssuer,string[] memory   attributesList, string[] memory attributesVal)   public
+        function init(address _KYCStorage  ,string memory id, uint64 _kycIssuer,string[] memory   attributesList, string[] memory attributesVal)   public
             {
 
             KYCStorage(_KYCStorage).setKYCIssuer(_kycIssuer);
@@ -26,7 +26,7 @@ library KYCLib2 {
             }
 
 
-    function setAttributePermission(address _KYCStorage  ,string memory  attributeName ,uint16 companion_id , uint8 permission)  public
+    function setAttributePermission(address _KYCStorage  ,string memory  attributeName ,uint64 companion_id , uint8 permission)  public
         {
 
             KYCStorage(_KYCStorage).setAttributePermission(attributeName , companion_id ,  permission);
@@ -37,7 +37,7 @@ library KYCLib2 {
 
 
 
-            function getKYCIssuer(address _KYCStorage  )  view   external  returns (uint16)
+            function getKYCIssuer(address _KYCStorage  )  view   external  returns (uint64)
             {
                 return KYCStorage(_KYCStorage).getKYCIssuer();
             }
@@ -59,7 +59,7 @@ library KYCLib2 {
 
 
 
-            function isAttributePermited(address _KYCStorage  ,string memory  attrName,uint16 companion_id) view public  returns (uint8)
+            function isAttributePermited(address _KYCStorage  ,string memory  attrName,uint64 companion_id) view public  returns (uint8)
             {
                     return KYCStorage(_KYCStorage).isAttributePermited(attrName, companion_id);
 
@@ -67,7 +67,7 @@ library KYCLib2 {
 
 
 
-            function getAttribute(address _KYCStorage ,string memory attrName,uint16 companion_id) view public  returns (bytes32 )
+            function getAttribute(address _KYCStorage ,string memory attrName,uint64 companion_id) view public  returns (bytes32 )
             {
 
                 return KYCStorage(_KYCStorage).getAttribute(attrName, companion_id);

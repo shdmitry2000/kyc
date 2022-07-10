@@ -13,9 +13,9 @@ contract KYCStorage is KYCInt ,Ownable {
 
 //struct KYCStorage {
             bytes32[]   attributesList;
-            mapping(string => mapping(uint16 => uint8)) permissions;
+            mapping(string => mapping(uint64 => uint8)) permissions;
 
-            uint16 kycIssuer;
+            uint64 kycIssuer;
             mapping(string => bytes32)  public attributes;
 
 
@@ -47,7 +47,7 @@ contract KYCStorage is KYCInt ,Ownable {
 
 
 
-    function setAttributePermission(string memory  attributeName ,uint16 companion_id , uint8 permission)  public onlyOwner
+    function setAttributePermission(string memory  attributeName ,uint64 companion_id , uint8 permission)  public onlyOwner
         {
 
 
@@ -76,12 +76,12 @@ contract KYCStorage is KYCInt ,Ownable {
 
          }
 
-         function setKYCIssuer(uint16 _kycIssuer ) public onlyOwner
+         function setKYCIssuer(uint64 _kycIssuer ) public onlyOwner
          {
              kycIssuer=_kycIssuer;
          }
 
-         function getKYCIssuer()   view  external  returns (uint16)
+         function getKYCIssuer()   view  external  returns (uint64)
          {
              return kycIssuer;
 
@@ -112,14 +112,14 @@ contract KYCStorage is KYCInt ,Ownable {
 
 
 
-        function isAttributePermited(string memory  attrName,uint16 companion_id) view public  returns (uint8)
+        function isAttributePermited(string memory  attrName,uint64 companion_id) view public  returns (uint8)
         {
                 return (permissions[attrName][companion_id]);
 
         }
 
 
-        function getAttribute(string memory attributeName, uint16 companion_id)  view public       returns (bytes32)
+        function getAttribute(string memory attributeName, uint64 companion_id)  view public       returns (bytes32)
             {
                 if (isAttributePermited(attributeName, companion_id)!=0)
                 {
@@ -133,7 +133,7 @@ contract KYCStorage is KYCInt ,Ownable {
 
             }
 /*
-function getAttributeValue(string memory attributeName,uint16 companion_id)  view public       returns (bytes32)
+function getAttributeValue(string memory attributeName,uint64 companion_id)  view public       returns (bytes32)
         {
             if (isAttributePermited(attributeName, companion_id)!=0)
                 {
