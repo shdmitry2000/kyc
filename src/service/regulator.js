@@ -40,6 +40,7 @@ let getCompaniesList = async () => {
 
         const accounts = await Web3.eth.getAccounts();
 //        console.log(accounts);
+        log.info("getCompaniesList")
         const res = await regulatorInstance.methods.getCompaniesList().call({  from: accounts[0]   });
         log.info(res)
         log.info(res[0])
@@ -284,7 +285,9 @@ let getConsumer = async (id) => {
 
 
 let submitKYC = async (fullname,id,issued_country, laddress, sex,
-                                       date_of_birth,  smoking,company_registry_id) => {
+                                       date_of_birth,smoking,active_account,account_open_date,kyc_issuer_registry_id) => {
+
+
     try {
         const accounts = await Web3.eth.getAccounts();
         const defacc=Web3.eth.defaultAccount;
@@ -296,12 +299,11 @@ let submitKYC = async (fullname,id,issued_country, laddress, sex,
         log.info(sex)
         log.info(date_of_birth)
         log.info(smoking)
-        log.info(company_registry_id)
+        log.info(kyc_issuer_registry_id)
 
         const res = await regulatorInstance.methods.performFullKYC(
-        fullname,id,issued_country, laddress, sex,
-                date_of_birth,  smoking,     company_registry_id
-        ).send({ from: accounts[0], gas: 4000000 });
+        id,kyc_issuer_registry_id,["fullname","issued_country","address","sex","date_of_birth","smoking","active_account","account_open_date","max"],
+                                [fullname,issued_country, laddress,sex,date_of_birth, String(smoking),active_account,account_open_date,"100000"]).send({ from: accounts[0], gas: 4000000 });
 //        const res = await regulatorInstance.methods.performFullKYC(
 //        accounts[1],"test cast",id,'herzel 12 TA', "213232", "2134 1234 1234 2132", "smoking",false,   1
 //        ).call({ from: accounts[0], gas: 4000000 });
@@ -366,15 +368,15 @@ let getConsumerAttributeValue = async (id,company_registry_id, attributeName) =>
     try {
         const accounts = await Web3.eth.getAccounts();
         const defacc=Web3.eth.defaultAccount;
-        log.info('getConsumerAttributePermission')
-//        log.info(id)
-//        log.info(company_registry_id)
-//        log.info(attributeName)
+        log.info('getConsumerAttributeValue')
+        log.info(id)
+        log.info(company_registry_id)
+        log.info(attributeName)
          const res = await regulatorInstance.methods.getConsumerAttributeValue( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
 
 
 //        const res = await regulatorInstance.methods.getConsumerAttributePermission( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
-//        log.info(res)
+        log.info(res)
 
         return Promise.resolve(Web3.utils.hexToUtf8(res));
     } catch (err) {
@@ -383,6 +385,33 @@ let getConsumerAttributeValue = async (id,company_registry_id, attributeName) =>
         return Promise.reject(err);
     }
 };
+
+
+let getConsumerOracleAttributeValue = async  (id,company_registry_id, attributeName) => {
+   try {
+           const accounts = await Web3.eth.getAccounts();
+           const defacc=Web3.eth.defaultAccount;
+           log.info('getConsumerOracleAttributeValue')
+           log.info(id)
+           log.info(company_registry_id)
+           log.info(attributeName)
+            const max = await regulatorInstance.methods.getConsumerAttributeValue( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
+
+            const res = Math.floor(Math.random() * ~~max);
+   //        const res = await regulatorInstance.methods.getConsumerAttributePermission( id,company_registry_id, attributeName).call({ from: accounts[0], gas: 4000000 });
+           log.info(res)
+
+           return Promise.resolve(Web3.utils.hexToUtf8(res));
+       } catch (err) {
+           log.info('err');
+           log.info(err);
+           return Promise.reject(err);
+       }
+   };
+
+
+
+
 
 let getConsumerAttributeName = async (id,company_registry_id, attributeRow) => {
     try {
@@ -417,15 +446,16 @@ let getConsumerPermissionList = async (id,company_registry_id) => {
          let permission_list = [];
          for (let i = 0; i < res.length; i++) {
                    let attributeName=Web3.utils.hexToUtf8(res[i])
-                   log.info('att name');
-                   log.info(attributeName);
-                   const permission=await getConsumerAttributePermission(id,company_registry_id, attributeName);
-                   log.info('permission');
-                   log.info(permission);
+                  // log.info('att name');
+                  // log.info(attributeName);
+
+                  // const permission=await getConsumerAttributePermission(id,company_registry_id, attributeName);
+                  // log.info('permission');
+                  // log.info(permission);
 
                    var item = {}
                    item ["attribut"] = attributeName;
-                   item ["permission"] = permission;
+                   item ["permission"] = await getConsumerAttributePermission(id,company_registry_id, attributeName);
 
                      permission_list.push(item);
                 }
@@ -600,6 +630,7 @@ export {
          setConsumerAttributePermission ,
          getConsumerAttributePermission,
          getConsumerAttributeValue,
+         getConsumerOracleAttributeValue,
          getConsumerAttributeName,
          getConsumerAttributeList,
          createConsentRequest,

@@ -9,6 +9,7 @@ import {
      setConsumerAttributePermission ,
      getConsumerAttributePermission,
      getConsumerAttributeValue,
+     getConsumerOracleAttributeValue,
      getConsumerAttributeName,
      getConsumerAttributeList,
      createConsentRequest,
@@ -32,6 +33,7 @@ const zero_address = "0x0000000000000000000000000000000000000000";
 ////request permissions for user kyc
 ///api/organizations/{register_id}/customers/{id}/{attribut}/permission
 ///api/organizations/{register_id}/customers/{id}/{attribut}/value
+///api/organizations/{register_id}/customers/{id}/oracle/{attribut}/value
 ///api/organizations/{register_id}/customers/{id}/attribute/{row}/name
 ///api/organizations/{register_id}/customers/{id}/attribute/list
 ///api/organizations/{register_id}/customers/{id}/kyc
@@ -579,7 +581,7 @@ router.post('/organizations/:register_id/connectbyaddress', async (req, res, nex
  *             properties:
     *              id:
     *                type: string
-    *                description: id
+    *                description: customer identification number
     *              issued_country:
     *                type: string
     *                description: cbank_account
@@ -593,14 +595,20 @@ router.post('/organizations/:register_id/connectbyaddress', async (req, res, nex
     *                type: string
     *                description: creadit_card_number
     *              smoking:
-    *                type: boolean
+    *                type: string
     *                description: smoking
    *              sex:
     *                type: string
+    *                description: sex
+   *              active_account:
+    *                type: string
     *                description: smoking
+    *              account_open_date:
+     *                type: string
+     *                description: smoking
     *              kyc_issuer_registry_id:
     *                type: integer
-    *                description: company_registry_id
+    *                description: the registry id of kyc issuer
 *     responses:
  *       201:
  *         description: Created
@@ -614,7 +622,7 @@ router.post('/organizations/:register_id/connectbyaddress', async (req, res, nex
  *                   properties:
  *                     id:
  *                       type: integer
- *                       description: The user ID.
+ *                       description: The customer id.
  *                       example: 0
  *                     name:
  *                       type: string
@@ -632,6 +640,8 @@ router.post('/customers/kyc/submit', async (req, res, next) => {
     let issued_country =req.body.issued_country;
     let date_of_birth=req.body.date_of_birth;
     let sex=req.body.sex;
+    let active_account=req.body.active_account;
+    let account_open_date=req.body.account_open_date;
     let smoking=req.body.smoking;
     let kyc_issuer_registry_id=req.body.kyc_issuer_registry_id;
 
@@ -642,7 +652,7 @@ router.post('/customers/kyc/submit', async (req, res, next) => {
 
 
     const data = await submitKYC(fullname,id,issued_country, laddress, sex,
-                                        date_of_birth,smoking,kyc_issuer_registry_id);
+                                        date_of_birth,smoking,active_account,account_open_date,kyc_issuer_registry_id);
 
     res.json({
       success: true,
@@ -679,10 +689,10 @@ router.post('/customers/kyc/submit', async (req, res, next) => {
  *             properties:
     *              id:
     *                type: string
-    *                description: id
+    *                description: customer id
     *              kyc_issuer_registry_id:
     *                type: string
-    *                description: id
+    *                description: kyc issuer registry id
 *     responses:
  *       201:
  *         description: Created
@@ -696,7 +706,7 @@ router.post('/customers/kyc/submit', async (req, res, next) => {
  *                   properties:
  *                     id:
  *                       type: integer
- *                       description: The user ID.
+ *                       description: The customer id.
  *                       example: 0
  *                     name:
  *                       type: string
@@ -753,10 +763,10 @@ router.post('/organizations/:register_id/consentrequest/new', async (req, res, n
  *             properties:
     *              id:
     *                type: string
-    *                description: id
+    *                description: customer id
     *              kyc_issuer_registry_id:
     *                type: string
-    *                description: id
+    *                description: kyc issuer registry id
 *     responses:
  *       201:
  *         description: Created
@@ -770,7 +780,7 @@ router.post('/organizations/:register_id/consentrequest/new', async (req, res, n
  *                   properties:
  *                     id:
  *                       type: integer
- *                       description: The user ID.
+ *                       description: The customer id.
  *                       example: 0
  *                     name:
  *                       type: string
@@ -996,6 +1006,68 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
 
 /**
 * @openapi
+* /api/organizations/{register_id}/customers/{id}/oracle/{attribut}/value:
+*  get:
+*    tags:
+*      - Company
+*    summary:  get attribute value for company by attribute name.performs  on company id+ customer id  .
+*    description: get attribute value for company by attribute name.performs  on company id+ customer id .
+*    parameters:
+*      - name: register_id
+*        in: path
+*        description: company register id
+*        required: true
+*        schema:
+*          type: string
+*      - name: id
+*        in: path
+*        description: customer id
+*        required: true
+*        schema:
+*          type: string
+*      - name: attribut
+*        in: path
+*        description: attribut name
+*        required: true
+*        schema:
+*          type: string
+*    responses:
+*      200:
+*         description: Success
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 company_name:
+*                    type: string
+*                    description: company name
+*                 company_address:
+*                    type: string
+*                    description: company local address
+*/
+   router.get('/organizations/:register_id/customers/:id/oracle/:attributeName/value', async (req, res, next) => {
+  try {
+    log.info("register_id")
+    let register_id = req.params.register_id;
+    let id = req.params.id;
+    let attributeName = req.params.attributeName;
+    log.info(register_id)
+    const data = await  getConsumerOracleAttributeValue(id,register_id, attributeName);  //getConsumerOracleAttributeValue
+//    const str = JSON.stringify(data, null, 2);
+    log.info(data)
+    res.json({
+       data,
+    });
+  } catch (err) {
+    res.status(500);
+    next(err);
+  }
+});
+
+
+/**
+* @openapi
 * /api/organizations/{register_id}/customers/{id}/attribute/{attributeRow}/name:
 *  get:
 *    tags:
@@ -1216,7 +1288,7 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
  *                   properties:
  *                     id:
  *                       type: integer
- *                       description: The user ID.
+ *                       description: The customer id.
  *                       example: 0
  *                     name:
  *                       type: string
