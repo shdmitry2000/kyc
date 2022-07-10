@@ -7,6 +7,8 @@
     "test": "test"
   },
   "dependencies": {
+    "@openzeppelin/cli": "^2.8.2",
+    "@openzeppelin/contracts": "^4.6.0",
     "@truffle/contract": "^4.5.3",
     "@truffle/hdwallet-provider": "^2.0.4",
     "body-parser": "^1.19.0",
@@ -18,7 +20,7 @@
     "swagger-ui-express": "^4.3.0",
     "truffle": "^5.5.7",
     "truffle-contract": "^4.0.31",
-    "web3": "^1.2.2"
+    "web3": "^1.7.3"
   },
   "scripts": {
     "start": " npm run build && nodemon ./dist/app.js",
@@ -31,6 +33,7 @@
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
+    "@openzeppelin/truffle-upgrades": "^1.15.0",
     "babel-cli": "^6.26.0",
     "dayjs": "^1.11.0",
     "express": "^4.17.3",

@@ -52,7 +52,8 @@ module.exports = {
        host: "127.0.0.1",     // Localhost (default: none)
        port: 7545,            // Standard Ethereum port (default: none)
        network_id: "*",       // Any network (default: none)
-       gas: 0x6691b7,
+    //   gas: 0x6691b7,
+       gasLimit: 0x6691b7 ,
        },
        rinkeby: {
 
@@ -73,14 +74,34 @@ module.exports = {
 
 
               provider: function() {
-                return new HDWalletProvider(mnemonic, "wss://ropsten.infura.io/ws/v3/22061bf4f360438997f0055e5c095cf4")
+                return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/ws/v3/22061bf4f360438997f0055e5c095cf4")
               },
               network_id: 3,
-              networkCheckTimeout: 10000,
-              confirmations: 10,
-              timeoutBlocks: 2000,
-              skipDryRun: true
+              skipDryRun: true,
+              confirmations: 9,
+              networkCheckTimeout: 1000000,
+              websocket: true,
+              timeoutBlocks: 200
             },
+            Goerli: {
+
+
+
+                                provider: function() {
+                                  return new HDWalletProvider(mnemonic, "wss://eth-goerli.g.alchemy.com/v2/UQWhNDhfOyVZTqPtWkgnh_yonzoHFroV");
+
+                                  //"https://eth-goerli.g.alchemy.com/v2/UQWhNDhfOyVZTqPtWkgnh_yonzoHFroV");//"wss://eth-goerli.g.alchemy.com/v2/UQWhNDhfOyVZTqPtWkgnh_yonzoHFroV");
+                                  },
+                                network_id: 5,
+                                networkCheckTimeout: 100000,
+                                confirmations: 0 ,
+                                timeoutBlocks: 200,
+                                pollingInterval: 60000,
+                           //     websocket: true
+                                skipDryRun:true,
+                                gasLimit: 0x6691b7 ,
+                                disableConfirmationListener: true,
+                              },
       ropsten: {
 
 
@@ -89,11 +110,17 @@ module.exports = {
                       return new HDWalletProvider(mnemonic, "wss://eth-ropsten.alchemyapi.io/v2/P_rlamgm0Xce7MJzZCHpg4mnXUu5gzTZ")
                     },
                     network_id: 3,
-                    networkCheckTimeout: 10000,
-                    confirmations: 10,
-                    timeoutBlocks: 2000,
-                    skipDryRun: true
+                    networkCheckTimeout: 100000,
+                    pollingInterval: 60000,
+                    websocket: true ,
+                    confirmations: 0,
+                    timeoutBlocks: 1300,
+                    skipDryRun:true,
+                    gasLimit: 0x6691b7 ,
+                    disableConfirmationListener: true,
                   }
+
+
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
