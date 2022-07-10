@@ -1,6 +1,8 @@
 pragma solidity ^0.8.13;
 
-import "./PermissionExtender.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "./KYCInt.sol";
+import "./KYCStorage.sol";
 import "./KYCLib.sol";
 
 /*
@@ -10,77 +12,113 @@ library KYCAttribLib {
 */
 
 
-contract KYC is PermissionExtender {
+contract KYC is KYCInt,Ownable {
 
-    using KYCLib for KYCLib.KYCStorage;
+    using KYCLib for address;
+    address public KYCexternalStorage;
 
-    modifier onlyOperator {
-            require(msg.sender == operatorContract);
-            _;
+/*
+    constructor(address _KYCStorageContract,
+    uint16 _kycPerformer,string memory fullname,string memory id,string memory issued_country,
+                   string memory laddress, string memory sex, string memory date_of_birth,  bool  isSmoking)   public    {
+
+            if (_KYCStorageContract!=address(0))
+                  KYCexternalStorage=_KYCStorageContract;
+              else
+                  KYCexternalStorage=address(new KYCStorage());
+
+            KYCexternalStorage.init( _kycPerformer, fullname, id, issued_country,
+                                  laddress,  sex,  date_of_birth,    isSmoking);
+      }
+
+
+*/
+
+constructor(address _KYCStorageContract ,string memory id, uint16 _kycPerformer,string[] memory   attributesList, string[] memory attributesVal)   public
+{
+
+    require(attributesList.length==attributesVal.length , "Customer still not  exist !");
+
+/**
+    if (_KYCStorageContract!=address(0)){
+          KYCexternalStorage=_KYCStorageContract;
+          }
+      else
+*/
+        {
+         KYCStorage  kycstor=new KYCStorage();
+          KYCexternalStorage=address(kycstor);
+          KYCexternalStorage.init( id,_kycPerformer, attributesList,  attributesVal);
         }
 
-    address operatorContract;
-    KYCLib.KYCStorage private self;
+
+
+
+  }
 
 
 
 
+/*
     constructor(address _operatorContract,uint16 _kycPerformer,string memory fullname,string memory id,string memory issued_country,
                 string memory laddress, string memory sex, string memory date_of_birth,  bool  isSmoking) public {
                operatorContract=_operatorContract;
         operatorContract=_operatorContract;
-        self.init( _kycPerformer, fullname, id, issued_country,
+        KYCStorageContract(_KYCStorageContract).init( _kycPerformer, fullname, id, issued_country,
                                   laddress,  sex,  date_of_birth,    isSmoking);
     }
 
+*/
 
 
-    function getAttributeValue(string memory attrName)  view public      onlyOperator returns (bytes32)
+/*
+    function getAttributeValue(string memory attrName,uint16 companion_id)  view public     returns (bytes32)
     {
-        self.getAttributeValue(attrName);
+        KYCexternalStorage.getAttributeValue(attrName,companion_id);
+    }
+*/
+
+    function getKYCIssuer()   view  external returns (uint16)
+    {
+        return KYCexternalStorage.getKYCIssuer();
     }
 
-    function getKYCIssuer()  view   external onlyOperator returns (uint16)
+    function getAttributeName(uint row)    view external  virtual returns (bytes32)
     {
-        return self.getKYCIssuer();
+        return KYCexternalStorage.getAttributeName(row);
     }
 
-    function getAttributeName(uint row)    view external onlyOperator virtual returns (bytes32)
+    function getAttributeLength()   view external   returns (uint)
     {
-        return self.getAttributeName(row);
+        return KYCexternalStorage.getAttributeLength();
     }
 
-    function getAttributeLength()   view external  onlyOperator returns (uint)
+    function getAttributeList()   external view  returns (bytes32[] memory)
     {
-        return self.getAttributeLength();
+       return KYCexternalStorage.getAttributeList();
     }
 
-    function getAttributeList()   external view onlyOperator returns (bytes32[] memory)
-    {
-       return self.getAttributeList();
-    }
-
-    function setAttributePermission(string memory  attributeName ,uint16 companion_id , uint8 permission)  external  onlyOperator
+    function setAttributePermission(string memory  attributeName ,uint16 companion_id , uint8 permission)  external  onlyOwner
     {
 
-        return self.setAttributePermission(attributeName , companion_id ,  permission);
+        return KYCexternalStorage.setAttributePermission(attributeName , companion_id ,  permission);
 
      }
 
 
 
-    function isAttributePermited(string memory  attributeName,uint16 companion_id) view public onlyOperator returns (uint8)
+    function isAttributePermited(string memory  attributeName,uint16 companion_id) view public   returns (uint8)
     {
-            return self.isAttributePermited(attributeName , companion_id );
+            return KYCexternalStorage.isAttributePermited(attributeName , companion_id );
 
     }
 
 
 
-    function getAttribute(string memory attributeName,uint16 companion_id) view public onlyOperator returns (bytes32 )
+    function getAttribute(string memory attributeName,uint16 companion_id) view  external returns (bytes32 )
     {
 
-        return self.getAttribute(attributeName , companion_id );
+        return KYCexternalStorage.getAttribute(attributeName , companion_id );
     }
 
 
