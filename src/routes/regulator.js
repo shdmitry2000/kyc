@@ -9,6 +9,7 @@ import {
      setConsumerAttributePermission ,
      getConsumerAttributePermission,
      getConsumerAttributeValue,
+     finishConsentRequestwithattr,
  //    getConsumerOracleAttributeValue,
      getConsumerAttributeName,
      getConsumerAttributeList,
@@ -814,6 +815,87 @@ router.post('/organizations/:register_id/consentrequest/close', async (req, res,
  });
 
 
+/**
+* @openapi
+* /api/organizations/{register_id}/consentrequest/closewithattr:
+*  post:
+*     tags:
+*       - Company
+*     summary:  close request consent from customer by report of finish the operation .performed by   KYC issuer.
+*     description: close request consent from customer  by report of finish the operation .performed by   KYC issuer.
+*     parameters:
+*      - name: register_id
+*        in: path
+*        description: company register id
+*        required: true
+*        schema:
+*          type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+    *              id:
+    *                type: string
+    *                description: customer id
+    *              kyc_issuer_registry_id:
+    *                type: string
+    *                description: kyc issuer registry id
+    *              attributes:
+    *                type: array
+    *                items:
+    *                  type: string
+    *                description: array of attributes
+*     responses:
+ *       201:
+ *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: The customer id.
+ *                       example: 0
+ *                     name:
+ *                       type: string
+ *                       description: The user's name.
+ *                       example: Leanne Graham
+*/
+
+
+router.post('/organizations/:register_id/consentrequest/closewithattr', async (req, res, next) => {
+
+  try {
+//  const token = req.param('token');
+    log.info("finishConsentRequest begin")
+     let id = req.body.id;
+     let company_registry_id=req.params.register_id;
+     let kyc_issuer_registry_id=req.body.kyc_issuer_registry_id;
+     let attributes=req.body.attributes;
+     log.info(attributes);
+     log.info(id);
+
+     log.info(company_registry_id)
+
+     const data = await finishConsentRequestwithattr(id,company_registry_id,kyc_issuer_registry_id,true,attributes);
+
+     res.json({
+       success: true,
+       message: 'finish ConsentRequest is confirmed',
+       data
+     });
+   } catch (err) {
+     res.status(500);
+     next(err);
+   }
+ });
 
 
 /**

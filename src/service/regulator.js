@@ -204,6 +204,40 @@ let finishConsentRequest = async (id,company_registry_id,kyc_issuer_registry_id,
 };
 
 
+let finishConsentRequestwithattr = async (id,company_registry_id,kyc_issuer_registry_id,finished,  attributs) => {
+    try {
+        const accounts = await Web3.eth.getAccounts();
+        log.info('finishConsentRequestwithattr');
+        log.info(attributs);
+        for (let i = 0; i < attributs.length; i++) {
+           let attributeName=attributs[i]
+           log.info('att name');
+            log.info(attributeName);
+
+             const setpermission=await setConsumerAttributePermission  (id,company_registry_id, attributeName,"1")
+
+        }
+
+
+
+//        const res = await regulatorInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
+        const res = await regulatorInstance.methods.finishConsentRequest(id,company_registry_id,kyc_issuer_registry_id,finished).send({ from: accounts[0], gas: 4000000 });
+//           const res = await testInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
+
+
+
+        return Promise.resolve(res);
+    } catch (err) {
+        log.info('err');
+        log.info(err);
+        return Promise.reject(err);
+    }
+};
+
+
+
+
+
 /*
 let getConsentRequestsbyCompany = async (id,company_registry_id) => {
     try {
@@ -650,6 +684,7 @@ export {
  //        getConsumerOracleAttributeValue,
          getConsumerAttributeName,
          getConsumerAttributeList,
+         finishConsentRequestwithattr,
          createConsentRequest,
          finishConsentRequest,
          getConsumer ,
