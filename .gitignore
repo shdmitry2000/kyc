@@ -2,4 +2,6 @@
 build
 dist
 node_modules
+contracts-git
+contracts-lib
 

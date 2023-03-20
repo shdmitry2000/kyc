@@ -1,5 +1,6 @@
 pragma solidity ^0.8.6;
 
+
 library StringLibrary {
 
     function compare(string memory s1, string memory s2) public pure returns (bool) {

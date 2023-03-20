@@ -9,6 +9,7 @@
   "dependencies": {
     "@openzeppelin/cli": "^2.8.2",
     "@openzeppelin/contracts": "^4.6.0",
+    "@openzeppelin/contracts-upgradeable": "^4.7.2",
     "@truffle/contract": "^4.5.3",
     "@truffle/hdwallet-provider": "^2.0.4",
     "body-parser": "^1.19.0",
@@ -18,6 +19,7 @@
     "solc": "^0.8.13",
     "swagger-jsdoc": "^6.2.0",
     "swagger-ui-express": "^4.3.0",
+    "textmagic-rest-client": "^1.0.11",
     "truffle": "^5.5.7",
     "truffle-contract": "^4.0.31",
     "web3": "^1.7.3"
@@ -39,6 +41,7 @@
     "express": "^4.17.3",
     "pino": "^7.10.0",
     "pino-pretty": "^7.6.1",
-    "swagger-autogen": "^2.21.0"
+    "swagger-autogen": "^2.21.0",
+    "twilio": "^3.80.1"
   }
 }

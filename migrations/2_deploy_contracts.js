@@ -3,15 +3,18 @@ var StringLibrary = artifacts.require("./StringLibrary.sol");
 var KYC = artifacts.require("./KYC.sol");
 var KYCLib = artifacts.require("./KYCLib.sol");
 var Regulator = artifacts.require("./Regulator.sol");
-
 var KYCInt=artifacts.require("./KYCInt.sol");
+//var Test=artifacts.require("./test.sol");
 var RegulatorLib = artifacts.require("./RegulatorLib.sol");
-
+var StorAddressUpgradeable = artifacts.require("./StorAddressUpgradeable.sol");
 var RegulatorInt = artifacts.require("./RegulatorInt.sol");
 
 var KYCFactory=artifacts.require("./KYCFactory.sol");
-var RegulatorStorage = artifacts.require("./RegulatorStorage.sol");
+var RegulatorStorage = artifacts.require("./StorAddressUpgradeable.sol");
 var KYCStorage = artifacts.require("./KYCStorage.sol");
+
+//var OwnableUpgradeable = artifacts.require("./@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol");
+//var Initializable = artifacts.require("./@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol");
 
 const zero_address = "0x0000000000000000000000000000000000000000";
 
@@ -28,10 +31,16 @@ module.exports = function(deployer, network, accounts) {
 
     let deployAccount = accounts[1];
 
+
+ //  deployer.deploy(OwnableUpgradeable,{overwrite: true});
+//   deployer.deploy(Initializable,{overwrite: true});
   // delay(2000);
   deployer.deploy(StringLibrary,{overwrite: true});
-
+ deployer.deploy(StorAddressUpgradeable);
+ //deployer.deploy(Test);
  deployer.link(StringLibrary, [KYC,KYCLib,KYCFactory,RegulatorStorage,KYCStorage,RegulatorLib,Regulator]);
+
+
  //delay(2000);
   deployer.deploy(KYCStorage,{overwrite: false});
   deployer.link(KYCStorage, [KYC,KYCLib,Regulator,KYCFactory]);

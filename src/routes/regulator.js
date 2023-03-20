@@ -21,6 +21,7 @@ import {
      getCompanyIdbyAddress,
      connectCompanyAddress,
      getConsumerPermissionList,
+     sendSms,
     } from '../service/regulator';
 import log from "../utils/logger";
 
@@ -169,8 +170,7 @@ router.get('/organizations', async (req, res, next) => {
 *                    description: company local address
 *                 register_id:
 *                    type: integer
-*                    description: company register id
-
+*                    description: company register i
 */
     router.get('/organizations/:register_id', async (req, res, next) => {
   try {
@@ -193,6 +193,71 @@ router.get('/organizations', async (req, res, next) => {
     next(err);
   }
 });
+
+
+
+/**
+* @openapi
+* /api/sendSMS:
+*  post:
+*     tags:
+*       - utility
+*     summary:  send sms.
+*     description: send sms.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+    *              phone_number:
+    *                type: string
+    *                description: the address   of company on chain
+    *              sms_body:
+    *                type: string
+    *                description: the address   of company on chain
+*     responses:
+ *       201:
+ *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     sms_delivery:
+ *                       type: string
+ *                       description: sms delivery status.
+ *                       example: 0
+*/
+
+
+
+    router.post('/sendSMS', async (req, res, next) => {
+  try {
+    log.info("phone_number")
+    let phone_number = req.body.phone_number;
+    let msg=req.body.sms_body;
+    log.info(phone_number);
+    log.info(msg)
+    const data = await sendSms(phone_number,msg);
+//    const str = JSON.stringify(data, null, 2);
+    log.info(data)
+//    res.json({
+//           data
+//        });
+    res.json({
+      sms_delivery : data,
+    });
+  } catch (err) {
+    res.status(500);
+    next(err);
+  }
+});
+
 
 /**
 * @openapi
@@ -610,6 +675,9 @@ router.post('/organizations/:register_id/connectbyaddress', async (req, res, nex
     *              kyc_issuer_registry_id:
     *                type: integer
     *                description: the registry id of kyc issuer
+    *              phone:
+     *                type: string
+     *                description: phone number
 *     responses:
  *       201:
  *         description: Created
@@ -645,7 +713,7 @@ router.post('/customers/kyc/submit', async (req, res, next) => {
     let account_open_date=req.body.account_open_date;
     let smoking=req.body.smoking;
     let kyc_issuer_registry_id=req.body.kyc_issuer_registry_id;
-
+    let phone=req.body.phone;
     let laddress= req.body.address;
 
 
@@ -653,7 +721,7 @@ router.post('/customers/kyc/submit', async (req, res, next) => {
 
 
     const data = await submitKYC(fullname,id,issued_country, laddress, sex,
-                                        date_of_birth,smoking,active_account,account_open_date,kyc_issuer_registry_id);
+                                        date_of_birth,smoking,active_account,account_open_date,phone,kyc_issuer_registry_id);
 
     res.json({
       success: true,

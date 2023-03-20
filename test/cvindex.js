@@ -287,6 +287,7 @@ contract('Regulator', function(accounts) {
 it("create full  KYC ", function() {
         var Registry_instance;
         var id="039342444";
+        var comp_id=1
         var firevent=false;
         var firevent2=false;
         return Regulator.deployed().then(function(instance) {
@@ -297,7 +298,12 @@ it("create full  KYC ", function() {
            }).then(function (result) {
                  console.log("getConsumer results:");
                  console.log(result);
-             return Registry_instance.performFullKYC( id,1,["fullname","issued_country","address","sex","date_of_birth","smoking","active_account","account_open_date"],
+            return Registry_instance.getCompaniesList.call();
+          }).then(function (companies_list) {
+                       console.log("companies_list", companies_list);
+
+
+             return Registry_instance.performFullKYC( id,comp_id,["fullname","issued_country","address","sex","date_of_birth","smoking","active_account","account_open_date"],
                         ["test cast","israel", "herzel 12 TA","M","21/12/2205", 'false','false',"21/12/2000"], {from: account });
 
         }).then(function (result) {

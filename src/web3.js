@@ -8,13 +8,13 @@ const projectId  =  "22061bf4f360438997f0055e5c095cf4"
 const E_MNEMONIC = process.env.MNEMONIC;
 const mnemonic = "mixed exercise gorilla coyote response trap actual wife poem bus typical reform";
 
-/*
+
 export default new Web3(
   new Web3.providers.HttpProvider(
     `http://127.0.0.1:7545`,
   )
 );
-*/
+
 
 /*
 
@@ -43,12 +43,12 @@ export default new Web3(
 
 */
 
-
+/*
 const provider =new HDWalletProvider(mnemonic, "wss://eth-goerli.g.alchemy.com/v2/UQWhNDhfOyVZTqPtWkgnh_yonzoHFroV");
 export default new Web3(provider.engine);
 //web3.eth.handleRevert = true;
 
-
+*/
 
 
 

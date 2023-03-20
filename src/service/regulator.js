@@ -6,6 +6,8 @@ import contract from 'truffle-contract';
 import log from "../utils/logger";
 import  NetworkNum  from '../const';
 
+import  twilio  from "twilio";
+
 //const { artifacts } = require("truffle");
 //var Regulator = artifacts.require("../../build/contracts/regulator.json");
 //let regulatorInstance2 =Regulator.deployed()
@@ -164,17 +166,36 @@ let connectCompanyAddress = async (account_address,id) => {
     }
 };
 
+function validatePhoneNumber(input_str) {
+  var re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}?[0-9]$/;
 
+  return re.test(input_str);
+}
 
 let createConsentRequest = async (id,company_registry_id,kyc_issuer_registry_id) => {
     try {
         const accounts = await Web3.eth.getAccounts();
         log.info('createConsentRequest')
+        const phone_number = await getConsumerAttributeValue(id,kyc_issuer_registry_id, "PHONE");
+
+        if (!validatePhoneNumber(phone_number)) {
+            log.info('PHONE');
+            log.info(phone_number);
+            return Promise.reject("no valid phone number found!");
+        }
+        const clientname= await getConsumerAttributeValue(id,kyc_issuer_registry_id, "fullname");;
+        const data = await getCompaniesData(kyc_issuer_registry_id);
+        const org_name=data[0];
+        let msg="Dear "+ clientname+",A consent request to fetch your KYC information was retrieved by "+org_name+ ".To approve click here.";
+
+
 //        const res = await regulatorInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
         const res = await regulatorInstance.methods.createConsentRequest(id,company_registry_id,kyc_issuer_registry_id).send({ from: accounts[0], gas: 4000000 });
 //           const res = await testInstance.methods.submitConsumer(account_address ,id).call({ from: accounts[0], gas: 4000000 });
 
-
+    //send sms (get phone number before)
+        log.info(msg);
+        const ressms =await sendSms(phone_number,msg);
 
         return Promise.resolve(res);
     } catch (err) {
@@ -184,6 +205,47 @@ let createConsentRequest = async (id,company_registry_id,kyc_issuer_registry_id)
     }
 };
 
+
+
+let sendSms = async (phoneNumber,msg) => {
+    try {
+
+
+
+      // Find your Account SID and Auth Token at twilio.com/console
+      // and set the environment variables. See http://twil.io/secure
+        const accountSid = "AC43516f99bebcb8dbb10e4901b9d7a777";
+        //process.env.TWILIO_ACCOUNT_SID;
+        const authToken = "d230a3c1e54ee695a6ffe91079f0da21";
+        //process.env.TWILIO_AUTH_TOKEN;
+        const twilioNumber = "+16016546276";
+        //process.env.TWILIO_PHONE_NUMBER;
+        log.info('sendSms from');
+        log.info(twilioNumber)
+        log.info(' to ');
+        log.info(phoneNumber);
+        log.info(msg);
+
+        const client = new twilio(accountSid, authToken);
+
+         const message = await client.messages
+            .create({
+              from: twilioNumber,
+              to: phoneNumber,
+              body: msg,
+            });
+
+
+
+        //print(message.sid)
+
+        return Promise.resolve(message);
+    } catch (err) {
+        log.info('err');
+        log.info(err);
+        return Promise.reject(err);
+    }
+};
 
 let finishConsentRequest = async (id,company_registry_id,kyc_issuer_registry_id,finished) => {
     try {
@@ -319,7 +381,7 @@ let getConsumer = async (id) => {
 
 
 let submitKYC = async (fullname,id,issued_country, laddress, sex,
-                                       date_of_birth,smoking,active_account,account_open_date,kyc_issuer_registry_id) => {
+                                       date_of_birth,smoking,active_account,account_open_date,phone,kyc_issuer_registry_id) => {
 
 
     try {
@@ -336,8 +398,8 @@ let submitKYC = async (fullname,id,issued_country, laddress, sex,
         log.info(kyc_issuer_registry_id)
 
         const res = await regulatorInstance.methods.performFullKYC(
-        id,kyc_issuer_registry_id,["fullname","issued_country","address","sex","date_of_birth","smoking","active_account","account_open_date","balance"],
-                                [fullname,issued_country, laddress,sex,date_of_birth, String(smoking),active_account,account_open_date,"100000"]).send({ from: accounts[0], gas: 4000000 });
+        id,kyc_issuer_registry_id,["fullname","issued_country","address","sex","date_of_birth","smoking","active_account","account_open_date","balance","PHONE"],
+                                [fullname,issued_country, laddress,sex,date_of_birth, String(smoking),active_account,account_open_date,"100000",phone]).send({ from: accounts[0], gas: 4000000 });
 //        const res = await regulatorInstance.methods.performFullKYC(
 //        accounts[1],"test cast",id,'herzel 12 TA', "213232", "2134 1234 1234 2132", "smoking",false,   1
 //        ).call({ from: accounts[0], gas: 4000000 });
@@ -693,4 +755,5 @@ export {
          getCompanyIdbyAddress,
          connectCompanyAddress,
          getConsumerPermissionList,
+         sendSms,
 };

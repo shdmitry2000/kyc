@@ -87,21 +87,21 @@ module.exports = {
 
 
 
-                                provider: function() {
-                                  return new HDWalletProvider(mnemonic, "wss://eth-goerli.g.alchemy.com/v2/UQWhNDhfOyVZTqPtWkgnh_yonzoHFroV");
+                    provider: function() {
+                      return new HDWalletProvider(mnemonic, "wss://eth-goerli.g.alchemy.com/v2/UQWhNDhfOyVZTqPtWkgnh_yonzoHFroV");
 
-                                  //"https://eth-goerli.g.alchemy.com/v2/UQWhNDhfOyVZTqPtWkgnh_yonzoHFroV");//"wss://eth-goerli.g.alchemy.com/v2/UQWhNDhfOyVZTqPtWkgnh_yonzoHFroV");
-                                  },
-                                network_id: 5,
-                                networkCheckTimeout: 100000,
-                                confirmations: 0 ,
-                                timeoutBlocks: 200,
-                                pollingInterval: 60000,
-                           //     websocket: true
-                                skipDryRun:true,
-                                gasLimit: 0x6691b7 ,
-                                disableConfirmationListener: true,
-                              },
+                      //"https://eth-goerli.g.alchemy.com/v2/UQWhNDhfOyVZTqPtWkgnh_yonzoHFroV");//"wss://eth-goerli.g.alchemy.com/v2/UQWhNDhfOyVZTqPtWkgnh_yonzoHFroV");
+                      },
+                    network_id: 5,
+                    networkCheckTimeout: 100000,
+                    confirmations: 0 ,
+                    timeoutBlocks: 200,
+                    pollingInterval: 60000,
+                    websocket: true ,
+                    skipDryRun:true,
+                    gasLimit: 0x6691b7 ,
+                    disableConfirmationListener: true,
+                  },
       ropsten: {
 
 

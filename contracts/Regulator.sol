@@ -1,12 +1,19 @@
 pragma solidity ^0.8.13;
 
+
+//import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+//import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+
 import "./StringLibrary.sol";
+import "./StorAddressUpgradeable.sol";
 import "./KYC.sol";
 import "./RegulatorLib.sol";
 //import "./RegulatorLib.sol";
 import "./KYCFactory.sol";
-
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "./RegulatorInt.sol";
+//import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 //
@@ -22,43 +29,57 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 //
 //
 
-
-contract Regulator is Ownable {
+contract Regulator is   StorAddressUpgradeable // Initializable,
+{
 
     using StringLibrary for string;
     using RegulatorLib for address;
 
 
-    address _RegulatorStorage  ;
+    //address _RegulatorStorage  ;
 
 
 
     event RegulatoryContractDeployed (address msgSender,string  msgstr,uint timestamp);
 
+
     constructor(address _RegulatorStorageContract)   public {
-/*
+
           if (_RegulatorStorageContract!=address(0))
-              _RegulatorStorage=_RegulatorStorageContract;
+              externalStorage=_RegulatorStorageContract;
           else
-*/
-              _RegulatorStorage=address(new RegulatorStorage());
+
+              externalStorage=address(new RegulatorStorage());
+
 
          emit RegulatoryContractDeployed(msg.sender,"Mined",block.timestamp);
 
-
           }
 
+/*
+       function initialize(address _RegulatorStorageContract) public initializer {
+              if (_RegulatorStorageContract!=address(0))
+                    externalStorage=_RegulatorStorageContract;
+                else
+                    externalStorage=address(new RegulatorStorage());
 
-    function performFullKYC( string memory id,uint64 company_registry_id, string[] memory   attributesList, string[] memory   attributesVal) public
-        {
+                       emit RegulatoryContractDeployed(msg.sender,"Mined",block.timestamp);
 
-            address kycaddr=KYCFactory.createKyc(id,  company_registry_id,    attributesList,    attributesVal);
+              __Ownable_init();
+          }
 
-           _RegulatorStorage.performFullKYC(  id,  company_registry_id,    kycaddr);
-        }
+*/
+
+        function performFullKYC( string memory id,uint64 company_registry_id, string[] memory   attributesList, string[] memory   attributesVal) public
+               {
+
+                   address kycaddr=KYCFactory.createKyc(id,  company_registry_id,    attributesList,    attributesVal);
+
+                  externalStorage.performFullKYC(  id,  company_registry_id,    kycaddr);
+               }
 
 
-
+ //       externalStorage.performFullKYC(  id,  company_registry_id,    kycaddr);
 
 
     function isConsentRequestAllowed(string memory id,uint64 company_id,uint64 kyc_manager_id) internal view returns (bool) {
@@ -73,10 +94,8 @@ contract Regulator is Ownable {
     function getConsumer( string memory id) public
                         view returns
                         (RegulatorStorage.Consumer memory) {
-                           return _RegulatorStorage.getConsumer(     id);
+                           return externalStorage.getConsumer(     id);
                     }
-
-
 
 
       function getConsentRequests()
@@ -85,13 +104,13 @@ contract Regulator is Ownable {
             returns (RegulatorStorage.ConsentRequest[] memory)
         {
 
-            return _RegulatorStorage.getConsentRequests();
+            return externalStorage.getConsentRequests();
         }
 
 
     function getConsumerAddress(string memory id ) public view returns(address)   {
 
-        return _RegulatorStorage.getConsumerAddress(id);
+        return externalStorage.getConsumerAddress(id);
     }
 
                //  function to add a customer profile to the database
@@ -101,7 +120,7 @@ contract Regulator is Ownable {
                 //  returns 2 if customer already in network
 
             function submitConsumer(address consumerAddress , string memory id) public  {
-                 return _RegulatorStorage.submitConsumer( consumerAddress ,   id);
+                 return externalStorage.submitConsumer( consumerAddress ,   id);
 
 
             }
@@ -113,61 +132,61 @@ contract Regulator is Ownable {
     function submitCompany(address companyAddress , string memory _name,string memory _local_address,uint64 registry_id) public  onlyOwner {
 
 
-        _RegulatorStorage.submitCompany( companyAddress ,   _name,  _local_address, registry_id) ;
+        externalStorage.submitCompany( companyAddress ,   _name,  _local_address, registry_id) ;
 
 
     }
 
 
     function getCompany( uint64 registry_id) public view returns(RegulatorStorage.Company memory)   {
-        return _RegulatorStorage.getCompany(  registry_id) ;
+        return externalStorage.getCompany(  registry_id) ;
 
        }
     function connectCompanyAddress( address companyAddress,uint64 id) public  onlyOwner   {
-         return _RegulatorStorage.connectCompanyAddress(  companyAddress,id) ;
+         return externalStorage.connectCompanyAddress(  companyAddress,id) ;
 
     }
 
 
     function getCompanyIdbyAddress( address companyAddress) public   returns (uint64)  {
-             return _RegulatorStorage.getCompanyIdbyAddress(  companyAddress) ;
+             return externalStorage.getCompanyIdbyAddress(  companyAddress) ;
 
         }
 
 
     function getConsumerAttributeList( string memory id,uint64 company_registry_id) public view returns(bytes32[] memory)
      {
-           return  _RegulatorStorage.getConsumerAttributeList(   id, company_registry_id);
+           return  externalStorage.getConsumerAttributeList(   id, company_registry_id);
 
      }
 
 
    function createConsentRequest(string memory id,uint64 company_id,uint64 kyc_manager_id) public   {
-        return _RegulatorStorage.createConsentRequest(  id, company_id, kyc_manager_id);
+        return externalStorage.createConsentRequest(  id, company_id, kyc_manager_id);
    }
 
 
 
     function finishConsentRequest(string memory id,uint64 company_id,uint64 kyc_manager_id,bool finished) public   {
 
-            return _RegulatorStorage.finishConsentRequest(  id, company_id, kyc_manager_id, finished);
+            return externalStorage.finishConsentRequest(  id, company_id, kyc_manager_id, finished);
 
       }
 
 
     function addCompanionPermission(string memory id , uint64 company_registry_id,string memory attributeName,uint8   attributepermission) public   {
 
-             _RegulatorStorage.addCompanionPermission(  id ,  company_registry_id,  attributeName,   attributepermission);
+             externalStorage.addCompanionPermission(  id ,  company_registry_id,  attributeName,   attributepermission);
         }
 
      function getConsumerAttributePermission( string memory id,uint64 company_registry_id,string memory attributeName) public view returns(uint8 permission)
          {
-            return _RegulatorStorage.getConsumerAttributePermission(   id, company_registry_id,  attributeName) ;
+            return externalStorage.getConsumerAttributePermission(   id, company_registry_id,  attributeName) ;
          }
 
          function getConsumerAttributeValue(string memory id,uint64 company_registry_id,string memory attributeName) public view returns(bytes32 )
          {
-            return _RegulatorStorage.getConsumerAttributeValue(  id, company_registry_id,  attributeName) ;
+            return externalStorage.getConsumerAttributeValue(  id, company_registry_id,  attributeName) ;
 
          }
 
@@ -176,14 +195,14 @@ contract Regulator is Ownable {
          function getConsumerAttributeName(string memory id,uint row) public view returns(bytes32 )
          {
 
-            return _RegulatorStorage.getConsumerAttributeName( id, row) ;
+            return externalStorage.getConsumerAttributeName( id, row) ;
 
          }
 
          function getAttributeLength(string memory id) public view returns(uint )
          {
 
-            return _RegulatorStorage.getAttributeLength(  id) ;
+            return externalStorage.getAttributeLength(  id) ;
 
          }
 
@@ -193,7 +212,7 @@ contract Regulator is Ownable {
     {
 
 
-                 return _RegulatorStorage.getCurrentKYCPIssuer(  id) ;
+                 return externalStorage.getCurrentKYCPIssuer(  id) ;
 
 
      }
@@ -202,7 +221,7 @@ contract Regulator is Ownable {
 
     function getCompaniesList() public view returns(  uint64 [] memory)
     {
-       return _RegulatorStorage.getCompaniesList() ;
+       return externalStorage.getCompaniesList() ;
     }
 
 
